@@ -1,0 +1,47 @@
+apiVersion: v1
+entries:
+  lgtm-stack-single-node:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-15T16:01:31.580891824Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 7.2.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.52.0
+    - condition: alloy.enabled
+      name: alloy
+      repository: https://grafana.github.io/helm-charts
+      version: 1.2.1
+    description: A Helm chart for the LGTM stack (Loki, Grafana, Tempo, Mimir, Alloy)
+      for a single node cluster.
+    digest: 1ab3848bba91963cbe6a687079c0de2f9f03fb490d2f795f0a175b0f6f438fae
+    name: lgtm-stack-single-node
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.0.1/lgtm-stack-single-node-0.0.1.tgz
+    version: 0.0.1
+  traefik-api-gateway:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-15T16:01:31.749498132Z"
+    dependencies:
+    - name: traefik
+      repository: https://traefik.github.io/charts
+      version: 39.0.5
+    description: A Helm chart for deploying the Traefik API gateway.
+    digest: 38e127563a4f35f7b65d25066eee5e876f45a719c5c030c8ec971be92c30f4a5
+    name: traefik-api-gateway
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/traefik-api-gateway-0.0.1/traefik-api-gateway-0.0.1.tgz
+    version: 0.0.1
+generated: "2026-03-15T16:01:31.749511547Z"
