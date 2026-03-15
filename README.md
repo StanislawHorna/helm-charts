@@ -1,41 +1,47 @@
-# Helm Charts
+# ☸️ Helm Charts
 
-A collection of Helm charts for deploying useful stacks on Kubernetes, with a focus on efficiency and ease of use.
+[![Release Charts](https://github.com/StanislawHorna/helm-charts/actions/workflows/release.yaml/badge.svg)](https://github.com/StanislawHorna/helm-charts/actions/workflows/release.yaml)
 
-## Available Charts
+A collection of curated Helm charts for deploying high-performance stacks on Kubernetes, with a focus on efficiency, observability, and modern cloud-native standards.
 
-### [lgtm-stack-single-node](./lgtm-stack-single-node)
+---
 
-The **LGTM Stack** (Loki, Grafana, Tempo, Mimir) plus **Alloy**, optimized for single-node Kubernetes clusters. This chart is designed for development environments, small VPS setups, or edge deployments where resource efficiency is key.
+## 🚀 Available Charts
 
-### [traefik-api-gateway](./traefik-api-gateway)
+Explore our collection of production-ready charts.
 
-The **Traefik API Gateway**, leveraging the modern **Kubernetes Gateway API** for cloud-native traffic management. This chart is designed to provide a production-ready entry point with automated TLS management.
+| Chart                                                           | Description                                                                                                                                                  | Links                                                                                              |
+| :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
+| **[`lgtm-stack-single-node`](./charts/lgtm-stack-single-node)** | The complete **LGTM Stack** (Loki, Grafana, Tempo, Mimir) + Alloy. Optimized for resource-constrained environments like single-node clusters or edge setups. | [Details](./charts/lgtm-stack-single-node) • [Values](./charts/lgtm-stack-single-node/values.yaml) |
+| **[`traefik-api-gateway`](./charts/traefik-api-gateway)**       | Modern **Traefik API Gateway** implementation leveraging the **Kubernetes Gateway API**. Includes automated TLS management with cert-manager.                | [Details](./charts/traefik-api-gateway) • [Values](./charts/traefik-api-gateway/values.yaml)       |
 
-## Getting Started
+---
 
-### Prerequisites
+## 🛠️ Getting Started
 
-- Helm 3.x installed
+### 1. Add Repository
 
-### Installation
+To start using these charts, add the repository to Helm:
 
-1. Add repository
-
-```shell
+```bash
 helm repo add sh-helm-charts https://StanislawHorna.github.io/helm-charts
-```
-
-2. Update index
-
-```shell
 helm repo update
 ```
 
-3. Install chart
+### 2. Install a Chart
 
-```shell
-helm install <your-release-name> sh-helm-charts/<chart-name>
+Install any chart from the repository using the following command:
+
+```bash
+# Example: Installing the LGTM Stack
+helm install my-lgtm sh-helm-charts/lgtm-stack-single-node --namespace observability --create-namespace
 ```
 
-- `<chart-name>` - represents directory name of helm chart in [`/charts`](/charts/)
+---
+
+## 🧩 Key Features
+
+- **Efficiency First**: Optimized configurations for minimal resource overhead.
+- **Observability Built-in**: Deep integration with Grafana and Prometheus-compatible metrics.
+- **Modern Standards**: Support for Kubernetes Gateway API and cloud-native practices.
+- **Automated CI/CD**: Charts are linted and released automatically via GitHub Actions.
