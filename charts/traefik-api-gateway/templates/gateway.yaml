@@ -1,0 +1,29 @@
+{{- if .Values.traefikApiGateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: traefik-gateway
+  namespace: {{ .Release.Namespace }}
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: web
+      port: {{ .Values.traefik.ports.web.port}}
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+
+  {{- if .Values.traefikApiGateway.https.enabled }}
+    - name: websecure
+      port: {{ .Values.traefik.ports.websecure.port}}
+      protocol: HTTPS
+      tls:
+        mode: Terminate
+        certificateRefs:
+          - name: traefik-gateway-tls-secret
+      allowedRoutes:
+        namespaces:
+          from: All
+  {{- end }}
+{{- end }}

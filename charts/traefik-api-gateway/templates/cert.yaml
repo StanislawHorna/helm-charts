@@ -1,0 +1,18 @@
+{{- if .Values.traefikApiGateway.https.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: traefik-gateway-tls-secret
+  namespace: {{ .Release.Namespace }}
+spec:
+  privateKey:
+    rotationPolicy: Always
+  secretName: traefik-gateway-tls-secret
+  commonName: {{ .Values.traefikApiGateway.https.certificate.hostnameSuffix }}
+  dnsNames:
+    - {{ .Values.traefikApiGateway.https.certificate.hostnameSuffix }}
+    - "*.{{ .Values.traefikApiGateway.https.certificate.hostnameSuffix }}"
+  issuerRef:
+    name: {{ .Values.traefikApiGateway.https.certificate.certIssuer.name }}
+    kind: {{ .Values.traefikApiGateway.https.certificate.certIssuer.kind }}
+{{- end }}

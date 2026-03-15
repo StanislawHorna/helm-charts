@@ -1,0 +1,33 @@
+traefikApiGateway:
+  enabled: true
+  https:
+    enabled: true
+    certificate:
+      hostnameSuffix: example.com
+      certIssuer:
+        name: vault-issuer
+        kind: ClusterIssuer
+
+traefik:
+  providers:
+    kubernetesGateway:
+      enabled: true
+  gatewayClass:
+    enabled: true
+    name: traefik
+  gateway:
+    enabled: false
+
+  ports:
+    web:
+      port: 8000
+      hostPort: 80     # maps Node:80 -> Pod:8000
+      expose:
+        enabled: true
+        port: 80
+    websecure:
+      port: 8443
+      hostPort: 443    # maps Node:443 -> Pod:8443
+      expose:
+        enabled: true
+        port: 443
