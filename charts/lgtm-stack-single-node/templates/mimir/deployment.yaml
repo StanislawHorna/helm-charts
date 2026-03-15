@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lgtm-stack.componentDeployment" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "lgtm-stack.componentAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lgtm-stack.componentAppName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "lgtm-stack.componentAppName" . }}
+    spec:
+      volumes:
+        - name: {{ include "lgtm-stack.componentAppName" . }}-config
+          configMap:
+            name: {{ include "lgtm-stack.componentConfig" . }}
+
+        - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+          persistentVolumeClaim:
+            claimName: {{ include "lgtm-stack.componentPVC" . }}
+
+      containers:
+        - name: mimir
+          image: "grafana/mimir:{{ .Values.mimir.image.tag }}"
+          args:
+            - "-config.file=etc/mimir/conf/config.yaml"
+            - "-config.expand-env=true"
+          resources:
+            {{- toYaml .Values.mimir.resources | nindent 12 }}
+
+          ports:
+            - containerPort: 8080
+              name: http
+            - containerPort: 9095
+              name: grpc
+
+          volumeMounts:
+            - name: {{ include "lgtm-stack.componentAppName" . }}-config
+              mountPath: etc/mimir/conf
+            - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+              mountPath: /data
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 8080
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+        {{- include "lgtm-stack.memcachedContainer" .Values.mimir.cacheResources | nindent 8 }}

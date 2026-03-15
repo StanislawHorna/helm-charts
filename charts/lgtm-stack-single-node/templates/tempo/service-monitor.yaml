@@ -1,0 +1,17 @@
+{{- if include "lgtm-stack.hasServiceMonitor" . }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "lgtm-stack.componentMonitor" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "lgtm-stack.componentAppName" . }}
+  endpoints:
+    - port: http-query
+      path: /metrics
+      interval: 15s
+{{- end }}

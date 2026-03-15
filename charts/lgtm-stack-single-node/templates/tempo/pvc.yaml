@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "lgtm-stack.componentPVC" . }}
+spec:
+  accessModes:
+    - ReadWriteOnce 
+  {{- if .Values.tempo.persistence.storageClass }}
+  storageClassName: {{ .Values.tempo.persistence.storageClass }}
+  {{- end }}
+  resources:
+    requests:
+      storage: {{ .Values.tempo.persistence.size }}

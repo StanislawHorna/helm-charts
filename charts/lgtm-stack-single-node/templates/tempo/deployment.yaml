@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lgtm-stack.componentDeployment" . }}
+  labels:
+    app: {{ include "lgtm-stack.componentAppName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lgtm-stack.componentAppName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "lgtm-stack.componentAppName" . }}
+    spec:
+      volumes:
+        - name: {{ include "lgtm-stack.componentAppName" . }}-config
+          configMap:
+            name:  {{ include "lgtm-stack.componentConfig" . }}
+        - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+          persistentVolumeClaim:
+            claimName: {{ include "lgtm-stack.componentPVC" . }}
+
+      containers:
+        - name: tempo
+          image: "grafana/tempo:{{ .Values.tempo.image.tag }}"
+          resources:
+            {{- toYaml .Values.tempo.resources | nindent 12 }}
+
+          args:
+            - -config.file=/etc/tempo/tempo.yaml
+            - -config.expand-env=true
+
+          ports:
+            - name: http-query
+              containerPort: 3200
+            - name: grpc-query
+              containerPort: 9095
+            - name: otlp-grpc
+              containerPort: 4317
+            - name: otlp-http
+              containerPort: 4318
+
+          volumeMounts:
+            - name: {{ include "lgtm-stack.componentAppName" . }}-config
+              mountPath: /etc/tempo
+            - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+              mountPath: /data
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3200
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+
+        {{- include "lgtm-stack.memcachedContainer" .Values.tempo.cacheResources | nindent 8 }}

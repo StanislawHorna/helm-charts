@@ -1,0 +1,16 @@
+{{- if .Values.grafana.provisionDatasources }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-datasources
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "lgtm-stack.labels" . | nindent 4 }}
+data:
+  datasources.yaml: |
+{{- if .Values.grafana.datasources }}
+{{ .Values.grafana.datasources | indent 4 }}
+{{- else }}
+{{ include "lgtm-stack.grafanaDefaultDatasources" . | indent 4 }}
+{{- end }}
+{{- end }}

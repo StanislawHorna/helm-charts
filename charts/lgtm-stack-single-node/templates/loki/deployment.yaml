@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "lgtm-stack.componentDeployment" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: loki
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "lgtm-stack.componentAppName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "lgtm-stack.componentAppName" . }}
+    spec:
+      volumes:
+        - name: {{ include "lgtm-stack.componentAppName" . }}-config
+          configMap:
+            name: {{ include "lgtm-stack.componentConfig" . }}
+            
+        - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+          persistentVolumeClaim:
+            claimName: {{ include "lgtm-stack.componentPVC" . }}
+
+      containers:
+        - name: loki
+          image: "grafana/loki:{{ .Values.loki.image.tag }}"
+          args:
+            - "-config.file=/etc/loki/conf/config.yaml"
+            - "-config.expand-env=true"
+          ports:
+            - containerPort: 3100
+          resources:
+            {{- toYaml .Values.loki.resources | nindent 12 }}
+          volumeMounts:
+            - name: {{ include "lgtm-stack.componentAppName" . }}-config
+              mountPath: etc/loki/conf
+            - name: {{ include "lgtm-stack.componentAppName" . }}-storage
+              mountPath: /data
+
+          readinessProbe:
+            httpGet:
+              path: /ready
+              port: 3100
+            initialDelaySeconds: 15
+            periodSeconds: 10
+
+        {{- include "lgtm-stack.memcachedContainer" .Values.loki.cacheResources | nindent 8 }}

@@ -1,0 +1,135 @@
+grafana:
+  renderingTimezone: Europe/Warsaw
+  rootUrl: https://grafana.example.com
+  provisionDashboards: true
+  provisionDatasources: true
+  gateway:
+    enabled: true
+    gatewayName: traefik-gateway
+    gatewayNamespace: traefik
+    allowHttp: false
+  image:
+    tag: 12.4.1
+  persistence:
+    enabled: true
+    size: 10Gi
+    storageClass: local-path
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  # Override default datasources here
+  # datasources: |
+  #   apiVersion: 1
+  #   datasources:
+  #     - name: Custom Loki
+  #       type: loki
+  #       url: http://custom-loki:3100
+
+loki:
+  image:
+    tag: 3.5.5
+  persistence:
+    enabled: true
+    size: 20Gi
+    storageClass: local-path
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+  cacheResources:
+    requests:
+      memory: "256Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+mimir:
+  image:
+    tag: 2.17.1
+  persistence:
+    enabled: true
+    size: 50Gi
+    storageClass: local-path
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "2Gi"
+      cpu: "1"
+  cacheResources:
+    requests:
+      memory: "256Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+tempo:
+  image:
+    tag: 2.9.0-rc.0
+  persistence:
+    enabled: true
+    size: 50Gi
+    storageClass: local-path
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+
+    limits:
+      memory: "512Mi"
+      cpu: "1"
+  cacheResources:
+    requests:
+      memory: "256Mi"
+      cpu: "50m"
+    limits:
+      memory: "256Mi"
+      cpu: "200m"
+
+alloy:
+  fullnameOverride: "alloy"
+  alloy:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "512Mi"
+        cpu: "500m"
+    configMap:
+      create: false 
+      name: alloy-config
+  controller:
+    type: daemonset
+  rbac:
+    create: true
+  configReloader:
+    resources:
+      requests:
+        memory: "50Mi"
+        cpu: "10m"
+      limits:
+        memory: "100Mi"
+        cpu: "20m"
+
+prometheus-node-exporter:
+  fullnameOverride: "node-exporter"
+  prometheus:
+    monitor:
+      enabled: true
+
+kube-state-metrics:
+  fullnameOverride: "kube-state-metrics"
+  prometheus:
+    monitor:
+      enabled: true

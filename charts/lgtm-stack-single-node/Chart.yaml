@@ -1,0 +1,23 @@
+apiVersion: v2
+name: lgtm-stack-single-node
+description: A Helm chart for the LGTM stack (Loki, Grafana, Tempo, Mimir, Alloy) for a single node cluster.
+type: application
+version: 0.0.1
+appVersion: "1.0.0"
+
+dependencies:
+  - name: crds
+    version: "0.0.0"
+    condition: crds.enabled
+  - name: kube-state-metrics
+    version: "7.2.0"
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: kubeStateMetrics.enabled
+  - name: prometheus-node-exporter
+    version: "4.52.0"
+    repository: https://prometheus-community.github.io/helm-charts
+    condition: nodeExporter.enabled
+  - name: alloy
+    version: "1.2.1"
+    repository: https://grafana.github.io/helm-charts
+    condition: alloy.enabled
