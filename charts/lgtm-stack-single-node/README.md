@@ -27,8 +27,8 @@ The **LGTM Stack** (Loki, Grafana, Tempo, Mimir) plus **Alloy**, optimized for s
 1. Clone this repository:
 
    ```bash
-   git clone https://github.com/stanislawhorna/observability-helm-charts.git
-   cd observability-helm-charts
+   git clone https://github.com/stanislawhorna/helm-charts.git
+   cd helm-charts
    ```
 
 2. Update dependencies for the chart:
