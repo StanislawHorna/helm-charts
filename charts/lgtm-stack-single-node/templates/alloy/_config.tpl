@@ -128,10 +128,17 @@ discovery.relabel "prometheus_annotations" {
 
   // Handle prometheus.io/path (default to /metrics if missing)
   rule {
+    action       = "replace"
+    replacement  = "/metrics"
+    target_label = "__metrics_path__"
+  }
+
+  rule {
     source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
     action        = "replace"
     target_label  = "__metrics_path__"
     regex         = "(.+)"
+    replacement   = "$1"
   }
 
   // Handle prometheus.io/port and update __address__
