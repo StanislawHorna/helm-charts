@@ -3,6 +3,34 @@ entries:
   lgtm-stack-single-node:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-03-20T22:47:19.139235665Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 7.2.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.52.0
+    - condition: alloy.enabled
+      name: alloy
+      repository: https://grafana.github.io/helm-charts
+      version: 1.2.1
+    description: A Helm chart for the LGTM stack (Loki, Grafana, Tempo, Mimir, Alloy)
+      for a single node cluster.
+    digest: 1bdf77f45d04a558a1eb06c6d7b758d6fed535ac98679ed92177fb11da56f786
+    name: lgtm-stack-single-node
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.1.0/lgtm-stack-single-node-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-03-15T16:01:31.580891824Z"
     dependencies:
     - condition: crds.enabled
@@ -30,6 +58,20 @@ entries:
     - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.0.1/lgtm-stack-single-node-0.0.1.tgz
     version: 0.0.1
   traefik-api-gateway:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-20T22:47:19.368010698Z"
+    dependencies:
+    - name: traefik
+      repository: https://traefik.github.io/charts
+      version: 39.0.5
+    description: A Helm chart for deploying the Traefik API gateway.
+    digest: 93d337344dd6f36330c3a647b83ccf5acc49ada0b672fc3918e8074f94fb7383
+    name: traefik-api-gateway
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/traefik-api-gateway-0.0.2/traefik-api-gateway-0.0.2.tgz
+    version: 0.0.2
   - apiVersion: v2
     appVersion: 1.0.0
     created: "2026-03-15T16:01:31.749498132Z"
@@ -60,4 +102,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-03-20T18:43:58.639839399Z"
+generated: "2026-03-20T22:47:19.368026057Z"
