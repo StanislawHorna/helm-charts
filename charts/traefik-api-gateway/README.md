@@ -40,7 +40,7 @@ A Helm chart for the **Traefik API Gateway**, leveraging the modern **Kubernetes
 
 ## Repository Structure
 
-- `traefik-api-gateway/`: The primary chart for the Traefik Gateway.
+- `charts/traefik-api-gateway/`: The primary chart for the Traefik Gateway.
   - `crds/`: Standard and experimental Gateway API CRDs.
   - `templates/`: Modular templates for the Gateway, TLS Certificates, and more.
   - `values.yaml`: Configuration for hostname suffixes, issuers, and Traefik port mapping.

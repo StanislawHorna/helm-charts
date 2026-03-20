@@ -44,7 +44,7 @@ The **LGTM Stack** (Loki, Grafana, Tempo, Mimir) plus **Alloy**, optimized for s
 
 ## Repository Structure
 
-- `lgtm-stack-single-node/`: The primary chart for the LGTM stack.
+- `charts/lgtm-stack-single-node/`: The primary chart for the LGTM stack.
   - `charts/crds/`: A subchart to manage necessary CRDs.
   - `files/grafana-dashboards/`: Pre-configured JSON dashboards (e.g., Kubernetes resource consumption).
   - `templates/`: Modular templates for each LGTM component.
