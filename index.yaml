@@ -44,4 +44,20 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/traefik-api-gateway-0.0.1/traefik-api-gateway-0.0.1.tgz
     version: 0.0.1
-generated: "2026-03-15T16:01:31.749511547Z"
+  vault-integration:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2026-03-20T18:43:58.63982895Z"
+    dependencies:
+    - name: external-secrets
+      repository: https://charts.external-secrets.io
+      version: 2.1.0
+    description: HashiCorp Vault integration with k8s using cert manager and external
+      secrets.
+    digest: 6ef86d5ec1aaa4870b3d4be0cd0be460dab206b25e6dca5211528f43b6149824
+    name: vault-integration
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
+    version: 0.0.1
+generated: "2026-03-20T18:43:58.639839399Z"
