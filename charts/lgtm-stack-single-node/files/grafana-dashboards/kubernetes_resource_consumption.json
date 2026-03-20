@@ -1655,6 +1655,118 @@
                 "type": "prometheus",
                 "uid": "${datasource}"
             },
+            "description": "No data is generally a good thing here.",
+            "fieldConfig": {
+                "defaults": {
+                    "color": {
+                        "mode": "palette-classic"
+                    },
+                    "custom": {
+                        "axisBorderShow": false,
+                        "axisCenteredZero": false,
+                        "axisColorMode": "text",
+                        "axisLabel": "SECONDS",
+                        "axisPlacement": "auto",
+                        "barAlignment": 0,
+                        "barWidthFactor": 0.6,
+                        "drawStyle": "line",
+                        "fillOpacity": 25,
+                        "gradientMode": "opacity",
+                        "hideFrom": {
+                            "legend": false,
+                            "tooltip": false,
+                            "viz": false
+                        },
+                        "insertNulls": false,
+                        "lineInterpolation": "smooth",
+                        "lineStyle": {
+                            "fill": "solid"
+                        },
+                        "lineWidth": 2,
+                        "pointSize": 5,
+                        "scaleDistribution": {
+                            "type": "linear"
+                        },
+                        "showPoints": "never",
+                        "showValues": false,
+                        "spanNulls": false,
+                        "stacking": {
+                            "group": "A",
+                            "mode": "none"
+                        },
+                        "thresholdsStyle": {
+                            "mode": "off"
+                        }
+                    },
+                    "decimals": 2,
+                    "mappings": [],
+                    "thresholds": {
+                        "mode": "absolute",
+                        "steps": [
+                            {
+                                "color": "green",
+                                "value": 0
+                            },
+                            {
+                                "color": "red",
+                                "value": 80
+                            }
+                        ]
+                    },
+                    "unit": "s"
+                },
+                "overrides": []
+            },
+            "gridPos": {
+                "h": 5,
+                "w": 24,
+                "x": 0,
+                "y": 35
+            },
+            "id": 100,
+            "options": {
+                "legend": {
+                    "calcs": [
+                        "min",
+                        "max",
+                        "mean"
+                    ],
+                    "displayMode": "table",
+                    "placement": "right",
+                    "showLegend": true,
+                    "sortBy": "Max",
+                    "sortDesc": true
+                },
+                "tooltip": {
+                    "hideZeros": false,
+                    "mode": "multi",
+                    "sort": "none"
+                }
+            },
+            "pluginVersion": "12.4.1",
+            "targets": [
+                {
+                    "datasource": {
+                        "type": "prometheus",
+                        "uid": "${datasource}"
+                    },
+                    "editorMode": "code",
+                    "exemplar": true,
+                    "expr": "sum(rate(container_cpu_cfs_throttled_seconds_total{image!=\"\"}[5m])) by (container) > 0",
+                    "interval": "$resolution",
+                    "legendFormat": "{{ container }}",
+                    "range": true,
+                    "refId": "A"
+                }
+            ],
+            "title": "CPU Throttled seconds by container",
+            "type": "timeseries"
+        },
+        {
+            "datasource": {
+                "type": "prometheus",
+                "uid": "${datasource}"
+            },
             "fieldConfig": {
                 "defaults": {
                     "color": {
@@ -1720,7 +1832,7 @@
                 "h": 8,
                 "w": 12,
                 "x": 0,
-                "y": 35
+                "y": 40
             },
             "id": 95,
             "options": {
@@ -1828,7 +1940,7 @@
                 "h": 8,
                 "w": 12,
                 "x": 12,
-                "y": 35
+                "y": 40
             },
             "id": 96,
             "options": {
@@ -1875,7 +1987,7 @@
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 43
+                "y": 48
             },
             "id": 90,
             "panels": [
@@ -2199,7 +2311,7 @@
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 44
+                "y": 49
             },
             "id": 69,
             "panels": [
@@ -2607,7 +2719,7 @@
                 "h": 1,
                 "w": 24,
                 "x": 0,
-                "y": 45
+                "y": 50
             },
             "id": 86,
             "panels": [],
@@ -2680,7 +2792,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 0,
-                "y": 46
+                "y": 51
             },
             "id": 84,
             "options": {
@@ -2798,7 +2910,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 12,
-                "y": 46
+                "y": 51
             },
             "id": 85,
             "options": {
@@ -2906,7 +3018,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 0,
-                "y": 55
+                "y": 60
             },
             "id": 87,
             "options": {
@@ -3014,7 +3126,7 @@
                 "h": 9,
                 "w": 12,
                 "x": 12,
-                "y": 55
+                "y": 60
             },
             "id": 88,
             "options": {
@@ -3133,7 +3245,7 @@
                 "h": 16,
                 "w": 9,
                 "x": 0,
-                "y": 64
+                "y": 69
             },
             "id": 92,
             "options": {
@@ -3251,7 +3363,7 @@
                 "h": 8,
                 "w": 7,
                 "x": 9,
-                "y": 64
+                "y": 69
             },
             "id": 93,
             "options": {
@@ -3356,7 +3468,7 @@
                 "h": 8,
                 "w": 8,
                 "x": 16,
-                "y": 64
+                "y": 69
             },
             "id": 94,
             "options": {
@@ -3472,6 +3584,6 @@
     "timezone": "browser",
     "title": "Kubernetes - resource consumption",
     "uid": "k8s_resource_consumption",
-    "version": 1,
+    "version": 2,
     "weekStart": ""
 }
