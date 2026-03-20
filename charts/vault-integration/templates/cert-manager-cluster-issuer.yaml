@@ -1,0 +1,17 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.certManager.clusterIssuer.name }}
+spec:
+  vault:
+    server: {{ .Values.vaultAccess.server }}
+    path: {{ .Values.certManager.clusterIssuer.path }}
+    auth:
+{{- if .Values.vaultAccess.auth.appRole.enabled }}
+      appRole:
+        path: {{ .Values.vaultAccess.auth.appRole.path }}
+        roleId: {{ .Values.vaultAccess.auth.appRole.roleId }}
+        secretRef:
+          name: {{ .Values.vaultAccess.auth.appRole.secretRef.name }}
+          key: {{ .Values.vaultAccess.auth.appRole.secretRef.key }}
+{{- end }}
