@@ -109,5 +109,102 @@ prometheus.scrape "cadvisor" {
   }
   forward_to = [prometheus.remote_write.mimir.receiver]
 }
+
+// Discover pods for metrics (separate from your log discovery)
+discovery.kubernetes "annotated_pods" {
+  role = "pod"
+}
+
+// Filter and transform targets based on annotations
+discovery.relabel "prometheus_annotations" {
+  targets = discovery.kubernetes.annotated_pods.targets
+
+  // Only scrape pods where prometheus.io/scrape: "true"
+  rule {
+    source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_scrape"]
+    action        = "keep"
+    regex         = "true"
+  }
+
+  // Handle prometheus.io/path (default to /metrics if missing)
+  rule {
+    action       = "replace"
+    replacement  = "/metrics"
+    target_label = "__metrics_path__"
+  }
+
+  rule {
+    source_labels = ["__meta_kubernetes_pod_annotation_prometheus_io_path"]
+    action        = "replace"
+    target_label  = "__metrics_path__"
+    regex         = "(.+)"
+    replacement   = "$1"
+  }
+
+  // Handle prometheus.io/port and update __address__
+  // This replaces the pod's default IP:PORT with PodIP:CustomPort
+  rule {
+    source_labels = ["__address__", "__meta_kubernetes_pod_annotation_prometheus_io_port"]
+    action        = "replace"
+    regex         = "([^:]+)(?::\\d+)?;(\\d+)"
+    replacement   = "$1:$2"
+    target_label  = "__address__"
+  }
+
+  // Optional: Map pod labels to your metrics for better querying
+  rule {
+    action = "labelmap"
+    regex  = "__meta_kubernetes_pod_label_(.+)"
+  }
+}
+
+// Scrape the filtered targets and send to Mimir
+prometheus.scrape "annotated_pods" {
+  targets    = discovery.relabel.prometheus_annotations.output
+  forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+// Receive OTLP data from your OTel Collector
+otelcol.receiver.otlp "default" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    metrics = [otelcol.processor.batch.default.input]
+    logs    = [otelcol.processor.batch.default.input]
+    traces  = [otelcol.processor.batch.default.input]
+  }
+}
+
+// Batch the data
+otelcol.processor.batch "default" {
+  output {
+    metrics = [otelcol.exporter.prometheus.mimir.input]
+    logs    = [otelcol.exporter.loki.default.input]
+    traces  = [otelcol.exporter.otlphttp.tempo.input]
+  }
+}
+
+// Convert OTel Metrics to Prometheus format and send to your Mimir block
+otelcol.exporter.prometheus "mimir" {
+  forward_to = [prometheus.remote_write.mimir.receiver]
+}
+
+// Convert OTel Logs to Loki format and send to your Loki block
+otelcol.exporter.loki "default" {
+  forward_to = [loki.write.default.receiver]
+}
+
+// Send Traces to Tempo (OTLP natively)
+otelcol.exporter.otlphttp "tempo" {
+  client {
+    endpoint = "http://{{ include "lgtm-stack.componentSVC" "tempo" }}:4318"
+  }
+}
+
 {{- end -}}
 

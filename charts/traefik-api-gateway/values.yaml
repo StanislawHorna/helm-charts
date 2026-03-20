@@ -18,16 +18,21 @@ traefik:
   gateway:
     enabled: false
 
+  metrics:
+    prometheus:
+      enabled: true
+      addRoutersLabels: true
+
   ports:
     web:
       port: 8000
-      hostPort: 80     # maps Node:80 -> Pod:8000
+      hostPort: 80 # maps Node:80 -> Pod:8000
       expose:
         enabled: true
         port: 80
     websecure:
       port: 8443
-      hostPort: 443    # maps Node:443 -> Pod:8443
+      hostPort: 443 # maps Node:443 -> Pod:8443
       expose:
         enabled: true
         port: 443

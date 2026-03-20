@@ -40,20 +40,10 @@ Default Grafana Datasources
 {{- define "lgtm-stack.grafanaDefaultDatasources" -}}
 apiVersion: 1
 datasources:
-  - name: Loki
-    type: loki
-    uid: loki
-    access: proxy
-    url: http://{{ include "lgtm-stack.componentSVC" "loki" }}:3100
-    jsonData:
-      derivedFields:
-        - datasourceUid: tempo
-          matcherRegex: "traceID=(\\w+)"
-          name: TraceID
-          url: "$${__value.raw}"
   - name: Mimir
     type: prometheus
     uid: mimir
+    isDefault: true
     access: proxy
     url: http://{{ include "lgtm-stack.componentSVC" "mimir" }}:8080/prometheus
     jsonData:
@@ -68,7 +58,17 @@ datasources:
           name: traceID
     secureJsonData:
       httpHeaderValue1: "{{ .Release.Name }}"
-
+  - name: Loki
+    type: loki
+    uid: loki
+    access: proxy
+    url: http://{{ include "lgtm-stack.componentSVC" "loki" }}:3100
+    jsonData:
+      derivedFields:
+        - datasourceUid: tempo
+          matcherRegex: "traceID=(\\w+)"
+          name: TraceID
+          url: "$${__value.raw}"
   - name: Tempo
     type: tempo
     uid: tempo
