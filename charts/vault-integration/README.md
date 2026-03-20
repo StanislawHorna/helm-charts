@@ -45,7 +45,7 @@ A Helm chart for integrating **HashiCorp Vault** with Kubernetes, providing auto
 
 ## Repository Structure
 
-- `vault-integration/`: The primary chart directory.
+- `charts/vault-integration/`: The primary chart directory.
   - `crds/`: Cert-manager CRDs for simplified lifecycle management.
   - `templates/`: Modular templates for cert-manager deployments, RBAC, and Vault-specific resources.
   - `values.yaml`: Main configuration file for Vault connectivity and component resource limits.
