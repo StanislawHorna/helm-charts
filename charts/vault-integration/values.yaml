@@ -1,0 +1,78 @@
+external-secrets:
+  installCRDs: true
+  fullnameOverride: "external-secrets"
+
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+  webhook:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+  certController:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+vaultAccess:
+  server: "http://<vault-ip-address>:8200"
+  auth:
+    appRole:
+      enabled: true
+      path: approle
+      roleId: "<to-be-replaced>"
+      secretRef:
+        name: vault-approle-secret
+        key: secret-id
+
+SecretStore:
+  - name: hcp-vault-secret-store
+    path: "path/to/kv"
+    version: "v2"
+
+certManager:
+  clusterIssuer:
+    enabled: true
+    name: vault-issuer
+    path: "pki/sign/<domain>"
+
+  caInjector:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+  controller:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
+
+  webhook:
+    resources:
+      limits:
+        cpu: 100m
+        memory: 128Mi
+      requests:
+        cpu: 100m
+        memory: 128Mi
