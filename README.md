@@ -14,6 +14,7 @@ Explore our collection of production-ready charts.
 | :-------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------- |
 | **[`lgtm-stack-single-node`](./charts/lgtm-stack-single-node)** | The complete **LGTM Stack** (Loki, Grafana, Tempo, Mimir) + Alloy. Optimized for resource-constrained environments like single-node clusters or edge setups. | [Details](./charts/lgtm-stack-single-node) • [Values](./charts/lgtm-stack-single-node/values.yaml) |
 | **[`traefik-api-gateway`](./charts/traefik-api-gateway)**       | Modern **Traefik API Gateway** implementation leveraging the **Kubernetes Gateway API**. Includes automated TLS management with cert-manager.                | [Details](./charts/traefik-api-gateway) • [Values](./charts/traefik-api-gateway/values.yaml)       |
+| **[`vault-integration`](./charts/vault-integration)**       | Integrating **HashiCorp Vault** with Kubernetes, providing automated certificate management via **cert-manager** and secret synchronization via **External Secrets Operator**.                | [Details](./charts/vault-integration) • [Values](./charts/vault-integration/values.yaml)       |
 
 ---
 
