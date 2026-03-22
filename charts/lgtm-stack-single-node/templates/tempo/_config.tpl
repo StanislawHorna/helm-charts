@@ -9,18 +9,12 @@ server:
 # Data ingestion receivers
 distributor:
   receivers:
-    jaeger:
-      protocols:
-        grpc:
-        thrift_compact:
-        thrift_binary:
-        thrift_http:
-    zipkin:
-    opencensus:
     otlp:
       protocols:
         grpc:
+          endpoint: "0.0.0.0:4317" 
         http:
+          endpoint: "0.0.0.0:4318" 
 
 compactor:
   compaction:

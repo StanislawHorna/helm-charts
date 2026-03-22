@@ -185,7 +185,7 @@ otelcol.processor.batch "default" {
   output {
     metrics = [otelcol.exporter.prometheus.mimir.input]
     logs    = [otelcol.exporter.loki.default.input]
-    traces  = [otelcol.exporter.otlphttp.tempo.input]
+    traces  = [otelcol.exporter.otlp.tempo.input]
   }
 }
 
@@ -200,9 +200,12 @@ otelcol.exporter.loki "default" {
 }
 
 // Send Traces to Tempo (OTLP natively)
-otelcol.exporter.otlphttp "tempo" {
+otelcol.exporter.otlp "tempo" {
   client {
-    endpoint = "http://{{ include "lgtm-stack.componentSVC" "tempo" }}:4318"
+    endpoint = "{{ include "lgtm-stack.componentSVC" "tempo" }}:4317"
+    tls {
+      insecure = true
+    }
   }
 }
 

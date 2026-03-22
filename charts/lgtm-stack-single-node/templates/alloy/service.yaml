@@ -1,0 +1,26 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "lgtm-stack.componentSVC" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "lgtm-stack.labels" . | nindent 4 }}
+    app: {{ include "lgtm-stack.componentAppName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: otlp-grpc
+      protocol: TCP
+      port: 4317
+      targetPort: 4317
+    - name: otlp-http
+      protocol: TCP
+      port: 4318
+      targetPort: 4318
+  selector:
+    {{- if .Values.alloy.fullnameOverride }}
+    app.kubernetes.io/name: {{ .Values.alloy.fullnameOverride }}
+    {{- else }}
+    app.kubernetes.io/name: alloy
+    {{- end }}
+    app.kubernetes.io/instance: {{ .Release.Name }}
