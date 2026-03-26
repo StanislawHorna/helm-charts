@@ -11,7 +11,7 @@ localPath:
       memory: 128Mi
 
 nfs-subdir-external-provisioner:
-  enabled: true
+  enabled: false
   nfs:
     server: <nfs-server-ip>
     path: /<nfs>/<server>/<path>
