@@ -1,0 +1,32 @@
+localPath:
+  storageClassName: local-storage
+  volumeBindingMode: WaitForFirstConsumer
+  reclaimPolicy: Delete
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+nfs-subdir-external-provisioner:
+  enabled: true
+  nfs:
+    server: <nfs-server-ip>
+    path: /<nfs>/<server>/<path>
+  storageClass:
+    name: nfs-storage
+    provisionerName: nfs-subdir-external-provisioner
+    reclaimPolicy: Retain
+    allowVolumeExpansion: true
+    volumeBindingMode: Immediate
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 100m
+      memory: 128Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
