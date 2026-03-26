@@ -13,7 +13,7 @@ grafana:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: local-path
+    storageClass: local-storage
   resources:
     requests:
       memory: "256Mi"
@@ -35,7 +35,7 @@ loki:
   persistence:
     enabled: true
     size: 20Gi
-    storageClass: local-path
+    storageClass: local-storage
   resources:
     requests:
       memory: "256Mi"
@@ -57,7 +57,7 @@ mimir:
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-path
+    storageClass: local-storage
   resources:
     requests:
       memory: "512Mi"
@@ -79,7 +79,7 @@ tempo:
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-path
+    storageClass: local-storage
   resources:
     requests:
       memory: "256Mi"
