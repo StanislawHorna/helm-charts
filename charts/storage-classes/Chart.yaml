@@ -9,5 +9,5 @@ appVersion: "1.0.0"
 dependencies:
   - name: csi-driver-nfs
     version: 4.13.1
-    repository: "https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts"
+    repository: "https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/v4.13.1/charts"
     condition: csi-driver-nfs.enabled
