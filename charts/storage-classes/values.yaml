@@ -20,7 +20,7 @@ csi-driver-nfs:
     name: nfs-storage
     parameters:
       server: <nfs-server-ip>
-      share: /<nfs>/<server>/<path>
+      share: /<directory>/<path>
     reclaimPolicy: Retain
     volumeBindingMode: Immediate
     allowVolumeExpansion: true
