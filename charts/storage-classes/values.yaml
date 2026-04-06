@@ -10,23 +10,17 @@ localPath:
       cpu: 100m
       memory: 128Mi
 
-nfs-subdir-external-provisioner:
+csi-driver-nfs:
   enabled: false
-  nfs:
-    server: <nfs-server-ip>
-    path: /<nfs>/<server>/<path>
+  kubeletDir: /var/lib/k0s/kubelet # default: /var/lib/kubelet/pods
+  controller:
+    enableSnapshotter: false
   storageClass:
+    create: true
     name: nfs-storage
-    provisionerName: nfs-subdir-external-provisioner
+    parameters:
+      server: <nfs-server-ip>
+      share: /<directory>/<path>
     reclaimPolicy: Retain
-    allowVolumeExpansion: true
     volumeBindingMode: Immediate
-  replicaCount: 1
-  resources:
-    limits:
-      cpu: 100m
-      memory: 128Mi
-    requests:
-      cpu: 100m
-      memory: 128Mi
-
+    allowVolumeExpansion: true
