@@ -116,6 +116,21 @@ entries:
   storage-classes:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-04-06T18:58:20.147433666Z"
+    dependencies:
+    - condition: csi-driver-nfs.enabled
+      name: csi-driver-nfs
+      repository: https://raw.githubusercontent.com/kubernetes-csi/csi-driver-nfs/master/charts
+      version: 4.13.1
+    description: A Helm chart for provisioning local path and nfs storage classes.
+    digest: e18e01f6b6edbc14cd7fff568406cb31ee0757de0c1e97f50d62656f33f4e671
+    name: storage-classes
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/storage-classes-0.1.0/storage-classes-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-03-26T21:28:47.367543133Z"
     dependencies:
     - condition: nfs-subdir-external-provisioner.enabled
@@ -174,4 +189,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-03-26T21:28:47.367560115Z"
+generated: "2026-04-06T18:58:20.147450783Z"
