@@ -24,8 +24,3 @@ csi-driver-nfs:
     reclaimPolicy: Retain
     volumeBindingMode: Immediate
     allowVolumeExpansion: true
-
-
-
-
-
