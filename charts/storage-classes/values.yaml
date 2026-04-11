@@ -15,12 +15,19 @@ csi-driver-nfs:
   kubeletDir: /var/lib/k0s/kubelet # default: /var/lib/kubelet/pods
   controller:
     enableSnapshotter: false
-  storageClass:
-    create: true
-    name: nfs-storage
-    parameters:
-      server: <nfs-server-ip>
-      share: /<directory>/<path>
-    reclaimPolicy: Retain
-    volumeBindingMode: Immediate
-    allowVolumeExpansion: true
+  storageClasses:
+    - name: nfs-storage-static
+      parameters:
+        server: <nfs-server-ip>
+        share: /<directory>/<path>
+        subDir: ${pvc.metadata.namespace}-${pvc.metadata.name}
+      reclaimPolicy: Retain
+      volumeBindingMode: Immediate
+      allowVolumeExpansion: true
+    - name: nfs-storage
+      parameters:
+        server: <nfs-server-ip>
+        share: /<directory>/<path>
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
+      allowVolumeExpansion: true
