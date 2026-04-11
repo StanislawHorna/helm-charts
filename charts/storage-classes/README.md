@@ -4,8 +4,8 @@ A Helm chart for provisioning dynamic storage solutions on Kubernetes. This char
 
 ## Key Features
 
-- **Local Storage**: Lightweight dynamic provisioning using the node's local filesystem (via Rancher Local Path Provisioner).
-- **Shared Storage**: Modern NFS support leveraging the standard **NFS CSI Driver**.
+- **Local Storage**: Lightweight dynamic provisioning using the node's local filesystem. Creates two storage classes: one with default naming and one with custom directory naming (`<namespace>-<pvc-name>`).
+- **Shared Storage**: Modern NFS support leveraging the standard **NFS CSI Driver**. Creates two storage classes: one with `Delete` reclaim policy and one with `Retain` reclaim policy.
 - **k0s Optimized**: Pre-configured to handle the non-standard paths used by the k0s distribution.
 - **Resource Efficient**: Minimal overhead, ideal for single-node or edge environments.
 
@@ -38,9 +38,11 @@ The Local Path Provisioner is embedded within this chart. It is useful for high-
 
 | Parameter | Description | Default |
 | :--- | :--- | :--- |
-| `localPath.storageClassName` | Name of the created StorageClass | `local-storage` |
-| `localPath.reclaimPolicy` | PVC reclaim policy | `Delete` |
-| `localPath.volumeBindingMode` | When to bind the volume | `WaitForFirstConsumer` |
+| `localPath.storageClasses` | List of local-path storage classes | `[{name: local-storage, ...}, {name: local-storage-named, ...}]` |
+| `localPath.storageClasses[].name` | Name of the created StorageClass | `local-storage` |
+| `localPath.storageClasses[].reclaimPolicy` | PVC reclaim policy | `Delete` |
+| `localPath.storageClasses[].volumeBindingMode` | When to bind the volume | `WaitForFirstConsumer` |
+| `localPath.storageClasses[].pathPattern` | Custom path pattern for directories | `nil` |
 
 ### NFS CSI Driver
 The NFS CSI Driver is included as a sub-chart dependency.
@@ -49,6 +51,8 @@ The NFS CSI Driver is included as a sub-chart dependency.
 | :--- | :--- | :--- |
 | `csi-driver-nfs.enabled` | Enable the NFS CSI Driver | `false` |
 | `csi-driver-nfs.kubeletDir` | Path to the host's kubelet directory | `/var/lib/k0s/kubelet` |
-| `csi-driver-nfs.storageClass.name` | Name of the NFS StorageClass | `nfs-storage` |
-| `csi-driver-nfs.storageClass.parameters.server` | NFS Server IP or Hostname | `<nfs-server-ip>` |
-| `csi-driver-nfs.storageClass.parameters.share` | Path on the NFS server | `/<directory>/<path>` |
+| `csi-driver-nfs.storageClasses` | List of NFS storage classes | `[{name: nfs-storage-static, ...}, {name: nfs-storage, ...}]` |
+| `csi-driver-nfs.storageClasses[].name` | Name of the NFS StorageClass | `nfs-storage` |
+| `csi-driver-nfs.storageClasses[].parameters.server` | NFS Server IP or Hostname | `<nfs-server-ip>` |
+| `csi-driver-nfs.storageClasses[].parameters.share` | Path on the NFS server | `/<directory>/<path>` |
+| `csi-driver-nfs.storageClasses[].reclaimPolicy` | PVC reclaim policy | `Delete` / `Retain` |
