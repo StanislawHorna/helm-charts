@@ -1,7 +1,12 @@
 localPath:
-  storageClassName: local-storage
-  volumeBindingMode: WaitForFirstConsumer
-  reclaimPolicy: Delete
+  storageClasses:
+    - name: local-storage
+      volumeBindingMode: WaitForFirstConsumer
+      reclaimPolicy: Delete
+    - name: local-storage-static
+      volumeBindingMode: WaitForFirstConsumer
+      reclaimPolicy: Retain
+      pathPattern: "{{ .PVC.Namespace }}-{{ .PVC.Name }}"
   resources:
     limits:
       cpu: 100m
