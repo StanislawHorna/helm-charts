@@ -1,7 +1,12 @@
 localPath:
-  storageClassName: local-storage
-  volumeBindingMode: WaitForFirstConsumer
-  reclaimPolicy: Delete
+  storageClasses:
+    - name: local-path
+      volumeBindingMode: WaitForFirstConsumer
+      reclaimPolicy: Delete
+    - name: local-path-static
+      volumeBindingMode: WaitForFirstConsumer
+      reclaimPolicy: Retain
+      pathPattern: "{{ .PVC.Namespace }}/{{ .PVC.Name }}/"
   resources:
     limits:
       cpu: 100m
@@ -15,12 +20,19 @@ csi-driver-nfs:
   kubeletDir: /var/lib/k0s/kubelet # default: /var/lib/kubelet/pods
   controller:
     enableSnapshotter: false
-  storageClass:
-    create: true
-    name: nfs-storage
-    parameters:
-      server: <nfs-server-ip>
-      share: /<directory>/<path>
-    reclaimPolicy: Retain
-    volumeBindingMode: Immediate
-    allowVolumeExpansion: true
+  storageClasses:
+    - name: nfs-storage-static
+      parameters:
+        server: <nfs-server-ip>
+        share: /<directory>/<path>
+        subDir: ${pvc.metadata.namespace}-${pvc.metadata.name}
+      reclaimPolicy: Retain
+      volumeBindingMode: Immediate
+      allowVolumeExpansion: true
+    - name: nfs-storage
+      parameters:
+        server: <nfs-server-ip>
+        share: /<directory>/<path>
+      reclaimPolicy: Delete
+      volumeBindingMode: Immediate
+      allowVolumeExpansion: true
