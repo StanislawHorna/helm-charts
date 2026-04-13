@@ -16,6 +16,7 @@ Explore our collection of production-ready charts.
 | **[`traefik-api-gateway`](./charts/traefik-api-gateway)**       | Modern **Traefik API Gateway** implementation leveraging the **Kubernetes Gateway API**. Includes automated TLS management with cert-manager.                                  | [Details](./charts/traefik-api-gateway) • [Values](./charts/traefik-api-gateway/values.yaml)       |
 | **[`vault-integration`](./charts/vault-integration)**           | Integrating **HashiCorp Vault** with Kubernetes, providing automated certificate management via **cert-manager** and secret synchronization via **External Secrets Operator**. | [Details](./charts/vault-integration) • [Values](./charts/vault-integration/values.yaml)           |
 | **[`storage-classes`](./charts/storage-classes)**               | **Local Path Provisioner** for fast node-local storage and the **NFS CSI Driver** for shared network storage.                                                                  | [Details](./charts/storage-classes) • [Values](./charts/storage-classes/values.yaml)               |
+| **[`rust-fs`](./charts/rust-fs/)**                              | **rust-FS**, a lightweight and high-performance S3 compatible file storage application.                                                                                        | [Details](./charts/rust-fs/) • [Values](./charts/rust-fs/values.yaml)                              |
 
 ---
 
