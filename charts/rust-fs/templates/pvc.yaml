@@ -4,9 +4,9 @@ metadata:
   name: rust-fs-pvc
   namespace: {{ .Release.Namespace }}
 spec:
-  storageClassName: nfs-storage-static
+  storageClassName: {{ .Values.rustFS.storage.storageClass }}
   accessModes:
     - ReadWriteMany
   resources:
     requests:
-      storage: 250Gi
+      storage: {{ .Values.rustFS.storage.size }}

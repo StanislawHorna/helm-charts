@@ -12,6 +12,9 @@ rustFS:
     allowHttp: false
     apiHostname: "api.example.com"
     consoleHostname: "console.example.com"
+  storage:
+    size: 200Gi
+    storageClass: nfs-storage-static
 
 resources:
   requests:
