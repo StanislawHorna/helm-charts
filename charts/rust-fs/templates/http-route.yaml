@@ -1,0 +1,103 @@
+{{ if .Values.rustFS.gateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rust-fs-api-http-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.rustFS.gateway.gatewayName}}
+      namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
+      sectionName: web
+  hostnames:
+    - {{ .Values.rustFS.gateway.apiHostname }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      {{- if .Values.rustFS.gateway.allowHttp }}
+      backendRefs:
+        - name: rust-fs-service
+          port: 9000
+      {{- else }}
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            port: 443
+            statusCode: 301
+      {{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rust-fs-api-https-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.rustFS.gateway.gatewayName }}
+      namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
+      sectionName: websecure
+  hostnames:
+    - {{ .Values.rustFS.gateway.apiHostname }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: rust-fs-service
+          port: 9000
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rust-fs-console-http-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.rustFS.gateway.gatewayName}}
+      namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
+      sectionName: web
+  hostnames:
+    - {{ .Values.rustFS.gateway.consoleHostname }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      {{- if .Values.rustFS.gateway.allowHttp }}
+      backendRefs:
+        - name: rust-fs-service
+          port: 9001
+      {{- else }}
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            port: 443
+            statusCode: 301
+      {{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: rust-fs-console-https-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.rustFS.gateway.gatewayName }}
+      namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
+      sectionName: websecure
+  hostnames:
+    - {{ .Values.rustFS.gateway.consoleHostname }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: rust-fs-service
+          port: 9001
+{{ end }}

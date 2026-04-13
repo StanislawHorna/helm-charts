@@ -1,0 +1,41 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: otel-collector-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    receivers:
+      otlp:
+        protocols:
+          grpc:
+            endpoint: 0.0.0.0:4317
+          http:
+            endpoint: 0.0.0.0:4318
+
+    processors:
+      batch:
+        send_batch_size: 1000
+        timeout: 10s
+          
+    exporters:
+      # Point metrics to Alloy's OTLP gRPC port
+      otlp_grpc/alloy:
+        endpoint: "{{ .Values.rustFS.alloyAddress}}" 
+        tls:
+          insecure: true
+
+    service:
+      pipelines:
+        metrics:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp_grpc/alloy] 
+        logs:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp_grpc/alloy]
+        traces:
+          receivers: [otlp]
+          processors: [batch]
+          exporters: [otlp_grpc/alloy]
