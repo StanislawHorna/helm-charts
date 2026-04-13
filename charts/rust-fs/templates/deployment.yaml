@@ -19,9 +19,6 @@ spec:
         - name: rust-fs-storage
           persistentVolumeClaim:
             claimName: rust-fs-pvc
-        - name: otel-collector-config
-          configMap:
-            name: otel-collector-config
       containers:
         - name: rustfs
           image: "rustfs/rustfs:{{ .Values.rustFS.image.tag }}"
