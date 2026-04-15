@@ -13,13 +13,13 @@ grafana:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: local-storage
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
       cpu: "100m"
     limits:
-      memory: "512Mi"
+      memory: "1Gi"
       cpu: "500m"
   # Override default datasources here
   # datasources: |
@@ -35,7 +35,7 @@ loki:
   persistence:
     enabled: true
     size: 20Gi
-    storageClass: local-storage
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
@@ -57,7 +57,21 @@ mimir:
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-storage
+    storageClass: local-path-static
+  longTermStorage:
+    enabled: true
+    s3Endpoint: "rust-fs-service.rust-fs.svc.cluster.local:9000"
+    s3Bucket: "mimir-data"
+    s3Insecure: false
+    
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "hcp-vault-secret-store"
+      kvName: "rust-fs/mimir"
+      secretKeyName: "secret-key"
+      accessKeyName: "access-key"
+
+
   resources:
     requests:
       memory: "512Mi"
@@ -79,7 +93,7 @@ tempo:
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-storage
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
@@ -118,7 +132,7 @@ alloy:
         memory: "512Mi"
         cpu: "750m"
     configMap:
-      create: false 
+      create: false
       name: alloy-config
   controller:
     type: daemonset

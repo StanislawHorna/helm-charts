@@ -12,18 +12,25 @@ limits:
 # Configure Mimir to use Minio as object storage backend.
 common:
   storage:
-    backend: filesystem
-    filesystem:
-      dir: /data/mimir-storage
-
+    backend: s3
+    s3:
+      endpoint: rust-fs.internal-s3.svc.cluster.local:9000
+      access_key_id: ${S3_ACCESS_KEY}
+      secret_access_key: ${S3_SECRET_KEY}
+      insecure: {{ .Values.mimir.longTermStorage.s3Insecure }}
+      bucket_name: "mimir-data"
+  
 # Blocks storage requires a prefix when using a common object storage bucket.
 blocks_storage:
   storage_prefix: blocks
   tsdb:
     dir: /data/ingester
+    block_ranges_period: ["2h"]
 
+      
   # --- Caching Configuration (Memcached sidecar) ---
   bucket_store:
+    sync_dir: /data/store-gateway
     chunks_cache:
       backend: memcached
       memcached:
@@ -46,6 +53,9 @@ frontend:
     backend: memcached
     memcached:
       addresses: 127.0.0.1:11211
+
+query_scheduler:
+  max_outstanding_requests_per_tenant: 2048
 
 ingester:
   ring:

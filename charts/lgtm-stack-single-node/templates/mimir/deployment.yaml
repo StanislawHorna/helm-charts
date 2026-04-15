@@ -30,6 +30,20 @@ spec:
           args:
             - "-config.file=etc/mimir/conf/config.yaml"
             - "-config.expand-env=true"
+          
+          {{- if .Values.mimir.longTermStorage.enabled }}
+          env:
+          - name: S3_ACCESS_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mimir-s3-creds
+                key: access-key
+          - name: S3_SECRET_KEY
+            valueFrom:
+              secretKeyRef:
+                name: mimir-s3-creds
+                key: secret-key
+          {{- end }}
           resources:
             {{- toYaml .Values.mimir.resources | nindent 12 }}
 
