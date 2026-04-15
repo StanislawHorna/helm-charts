@@ -4,10 +4,17 @@ Default Mimir Configuration
 {{- define "lgtm-stack.MimirDefaultConfig" -}}
 target: all,overrides-exporter
 
+server:
+  log_level: {{ .Values.mimir.logLevel }}
+  log_format: json
+  
 limits:
   ingestion_rate: 100000
   ingestion_burst_size: 1000000
   max_global_series_per_user: 0 # unlimited
+  max_query_parallelism: 64 
+  out_of_order_time_window: 10m
+
 
 # Configure Mimir to use Minio as object storage backend.
 common:
@@ -20,7 +27,6 @@ common:
       insecure: {{ .Values.mimir.longTermStorage.s3Insecure }}
       bucket_name: {{ .Values.mimir.longTermStorage.s3Bucket}}
   
-# Blocks storage requires a prefix when using a common object storage bucket.
 blocks_storage:
   storage_prefix: blocks
   tsdb:
@@ -48,6 +54,7 @@ blocks_storage:
 
 # Configure the Query Frontend to use the Results Cache
 frontend:
+  log_queries_longer_than: 10s
   cache_results: true
   results_cache:
     backend: memcached
@@ -63,9 +70,5 @@ ingester:
 
 compactor:
   data_dir: /data/compactor
-
-server:
-  log_level: info
-  log_format: json
 
 {{- end -}}
