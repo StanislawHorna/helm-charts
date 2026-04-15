@@ -14,11 +14,11 @@ common:
   storage:
     backend: s3
     s3:
-      endpoint: rust-fs.internal-s3.svc.cluster.local:9000
+      endpoint: {{ .Values.mimir.longTermStorage.s3Endpoint }}
       access_key_id: ${S3_ACCESS_KEY}
       secret_access_key: ${S3_SECRET_KEY}
       insecure: {{ .Values.mimir.longTermStorage.s3Insecure }}
-      bucket_name: "mimir-data"
+      bucket_name: {{ .Values.mimir.longTermStorage.s3Bucket}}
   
 # Blocks storage requires a prefix when using a common object storage bucket.
 blocks_storage:
