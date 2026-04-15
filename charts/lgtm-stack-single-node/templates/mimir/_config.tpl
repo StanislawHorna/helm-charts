@@ -5,7 +5,7 @@ Default Mimir Configuration
 target: all,overrides-exporter
 
 server:
-  log_level: {{ .Values.mimir.logLevel }}
+  log_level: {{ default "info" .Values.mimir.logLevel }}
   log_format: json
   
 limits:
