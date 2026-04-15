@@ -27,7 +27,7 @@ spec:
             - ":9000"
             - "--console-enable"
             - "--server-domains"
-            - "{{ .Values.rustFS.serverDomains }}"
+            - "{{ include "rust-fs.serviceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:9000,{{ .Values.rustFS.serverDomains }}"
             - "--access-key"
             - "$(RUSTFS_ACCESS_KEY)"
             - "--secret-key"
@@ -38,7 +38,7 @@ spec:
             - name: RUSTFS_CONSOLE_ENABLE
               value: "true"
             - name: RUSTFS_SERVER_DOMAINS
-              value: "{{ .Values.rustFS.serverDomains }}"
+              value: "{{ include "rust-fs.serviceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:9000,{{ .Values.rustFS.serverDomains }}"
             - name: RUSTFS_LOG_LEVEL
               value: "{{ .Values.rustFS.obsLogLevel }}"
             - name: RUSTFS_OBS_ENDPOINT

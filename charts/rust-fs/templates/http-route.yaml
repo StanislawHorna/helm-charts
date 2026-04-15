@@ -18,7 +18,7 @@ spec:
             value: /
       {{- if .Values.rustFS.gateway.allowHttp }}
       backendRefs:
-        - name: rust-fs-service
+        - name: {{ include "rust-fs.serviceName" . }}
           port: 9000
       {{- else }}
       filters:
@@ -47,7 +47,7 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: rust-fs-service
+        - name: {{ include "rust-fs.serviceName" . }}
           port: 9000
 ---
 apiVersion: gateway.networking.k8s.io/v1
@@ -69,7 +69,7 @@ spec:
             value: /
       {{- if .Values.rustFS.gateway.allowHttp }}
       backendRefs:
-        - name: rust-fs-service
+        - name: {{ include "rust-fs.serviceName" . }}
           port: 9001
       {{- else }}
       filters:
@@ -98,6 +98,6 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: rust-fs-service
+        - name: {{ include "rust-fs.serviceName" . }}
           port: 9001
 {{ end }}
