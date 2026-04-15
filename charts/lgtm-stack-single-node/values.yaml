@@ -20,7 +20,7 @@ grafana:
       cpu: "100m"
     limits:
       memory: "1Gi"
-      cpu: "500m"
+      cpu: "1"
   # Override default datasources here
   # datasources: |
   #   apiVersion: 1
