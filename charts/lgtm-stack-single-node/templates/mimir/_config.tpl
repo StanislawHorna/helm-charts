@@ -12,13 +12,14 @@ limits:
   ingestion_rate: 100000
   ingestion_burst_size: 1000000
   max_global_series_per_user: 0 # unlimited
-  max_query_parallelism: 64 
+  max_query_parallelism: 64
   out_of_order_time_window: 10m
 
 
 # Configure Mimir to use Minio as object storage backend.
 common:
   storage:
+  {{ if .Values.mimir.longTermStorage.enabled}}
     backend: s3
     s3:
       endpoint: {{ .Values.mimir.longTermStorage.s3Endpoint }}
@@ -26,7 +27,11 @@ common:
       secret_access_key: ${S3_SECRET_KEY}
       insecure: {{ .Values.mimir.longTermStorage.s3Insecure }}
       bucket_name: {{ .Values.mimir.longTermStorage.s3Bucket}}
-  
+  {{ else }}
+    backend: filesystem
+    filesystem:
+      dir: /data/mimir-storage
+  {{ end }}
 blocks_storage:
   storage_prefix: blocks
   tsdb:
@@ -36,7 +41,9 @@ blocks_storage:
       
   # --- Caching Configuration (Memcached sidecar) ---
   bucket_store:
+  {{ if .Values.mimir.longTermStorage.enabled }}
     sync_dir: /data/store-gateway
+  {{ end }}
     chunks_cache:
       backend: memcached
       memcached:
