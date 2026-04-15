@@ -116,6 +116,16 @@ entries:
   rust-fs:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-04-15T19:41:25.584572749Z"
+    description: A Helm chart for the rust-FS application.
+    digest: 9101acff8473e23de5fa8b47d13d12a0235f0b9ae8aee852a37e8a59c9fa00f4
+    name: rust-fs
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/rust-fs-0.1.0/rust-fs-0.1.0.tgz
+    version: 0.1.0
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-04-13T20:43:53.350626617Z"
     description: A Helm chart for the rust-FS application.
     digest: a01f2272bf28515c894baaf6de516a9ea3e54fb3792097dde972d10a9b203a13
@@ -215,4 +225,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-04-13T20:43:53.350639501Z"
+generated: "2026-04-15T19:41:25.584594289Z"
