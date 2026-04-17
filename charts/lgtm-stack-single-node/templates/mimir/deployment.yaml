@@ -57,7 +57,7 @@ spec:
             - name: {{ include "lgtm-stack.componentAppName" . }}-config
               mountPath: etc/mimir/conf
             - name: {{ include "lgtm-stack.componentAppName" . }}-storage
-              mountPath: /data
+              mountPath: {{ include "lgtm-stack.Mimir.DefaultLocalPath" . }}
 
           readinessProbe:
             httpGet:
