@@ -54,7 +54,7 @@ loki:
 mimir:
   image:
     tag: 2.17.1
-  logLevel: warn
+  logLevel: info
   persistence:
     enabled: true
     size: 50Gi
@@ -64,6 +64,7 @@ mimir:
     s3Endpoint: "rust-fs.rust-fs.svc.cluster.local:9000"
     s3Bucket: "mimir-data"
     s3Insecure: false
+    localCacheRetention: 8d
     
     externalSecret:
       enabled: true
