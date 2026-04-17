@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rustfs
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: rustfs
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rustfs
+  template:
+    metadata:
+      labels:
+        app: rustfs
+    spec:
+      volumes:
+        - name: rust-fs-storage
+          persistentVolumeClaim:
+            claimName: rust-fs-pvc
+      containers:
+        - name: rustfs
+          image: "rustfs/rustfs:{{ .Values.rustFS.image.tag }}"
+          args:
+            - "--address"
+            - ":9000"
+            - "--console-enable"
+            - "--server-domains"
+            - "{{ include "rust-fs.serviceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:9000,{{ .Values.rustFS.serverDomains }}"
+            - "--access-key"
+            - "$(RUSTFS_ACCESS_KEY)"
+            - "--secret-key"
+            - "$(RUSTFS_SECRET_KEY)"
+          env:
+            - name: RUSTFS_ADDRESS
+              value: "0.0.0.0:9000"
+            - name: RUSTFS_CONSOLE_ENABLE
+              value: "true"
+            - name: RUSTFS_SERVER_DOMAINS
+              value: "{{ include "rust-fs.serviceName" . }}.{{ .Release.Namespace }}.svc.cluster.local:9000,{{ .Values.rustFS.serverDomains }}"
+            - name: RUSTFS_LOG_LEVEL
+              value: "{{ .Values.rustFS.obsLogLevel }}"
+            - name: RUSTFS_OBS_ENDPOINT
+              value: "{{ .Values.rustFS.alloyAddress}}"
+            - name: RUSTFS_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: initial-secret
+                  key: access-key
+            - name: RUSTFS_SECRET_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: initial-secret
+                  key: secret-key
+          ports:
+            - name: api
+              containerPort: 9000
+            - name: console
+              containerPort: 9001
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+          volumeMounts:
+            - name: rust-fs-storage
+              mountPath: /data
+          livenessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "curl -f http://127.0.0.1:9000/health && curl -f http://127.0.0.1:9001/rustfs/console/health"
+            initialDelaySeconds: 40 
+            periodSeconds: 30       
+            timeoutSeconds: 10      
+            failureThreshold: 3     
+          readinessProbe:
+            exec:
+              command:
+                - "sh"
+                - "-c"
+                - "curl -f http://127.0.0.1:9000/health && curl -f http://127.0.0.1:9001/rustfs/console/health"
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+
+

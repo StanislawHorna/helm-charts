@@ -1,0 +1,7 @@
+# .helmignore
+.git/
+*.ipynb
+node_modules/
+venv/
+*.sublime-project
+.DS_Store

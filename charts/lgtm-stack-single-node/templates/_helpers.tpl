@@ -39,6 +39,12 @@ app.kubernetes.io/instance: {{ .Release.Name }}
 {{- end -}}
 {{- end -}}
 
+{{/* Check if ExternalSecrets CRD is installed */}}
+{{- define "lgtm-stack.hasExternalSecrets" -}}
+{{- if .Capabilities.APIVersions.Has "external-secrets.io/v1" -}}
+  {{- true -}}
+{{- end -}}
+{{- end -}}
 {{/*
 Convert any K8s memory string (e.g., "1Gi", "512Mi") to a raw MB integer.
 Usage: {{ include "lgtm-stack.toMegabytes" "1Gi" }}

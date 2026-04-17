@@ -13,14 +13,14 @@ grafana:
   persistence:
     enabled: true
     size: 10Gi
-    storageClass: local-path
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
       cpu: "100m"
     limits:
-      memory: "512Mi"
-      cpu: "500m"
+      memory: "1Gi"
+      cpu: "1"
   # Override default datasources here
   # datasources: |
   #   apiVersion: 1
@@ -35,7 +35,7 @@ loki:
   persistence:
     enabled: true
     size: 20Gi
-    storageClass: local-path
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
@@ -54,23 +54,39 @@ loki:
 mimir:
   image:
     tag: 2.17.1
+  logLevel: info
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-path
+    storageClass: local-path-static
+  longTermStorage:
+    enabled: true
+    s3Endpoint: "rust-fs.rust-fs.svc.cluster.local:9000"
+    s3Bucket: "mimir-data"
+    s3Insecure: false
+    localCacheRetention: 8d
+    
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "hcp-vault-secret-store"
+      kvName: "rust-fs/mimir"
+      secretKeyName: "secret-key"
+      accessKeyName: "access-key"
+
+
   resources:
     requests:
       memory: "512Mi"
       cpu: "100m"
     limits:
       memory: "2Gi"
-      cpu: "1"
+      cpu: "2"
   cacheResources:
     requests:
       memory: "256Mi"
       cpu: "50m"
     limits:
-      memory: "256Mi"
+      memory: "512Mi"
       cpu: "200m"
 
 tempo:
@@ -79,7 +95,7 @@ tempo:
   persistence:
     enabled: true
     size: 50Gi
-    storageClass: local-path
+    storageClass: local-path-static
   resources:
     requests:
       memory: "256Mi"
@@ -116,9 +132,9 @@ alloy:
         cpu: "100m"
       limits:
         memory: "512Mi"
-        cpu: "750m"
+        cpu: "1"
     configMap:
-      create: false 
+      create: false
       name: alloy-config
   controller:
     type: daemonset

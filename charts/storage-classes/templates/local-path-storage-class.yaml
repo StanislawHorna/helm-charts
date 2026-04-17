@@ -1,0 +1,14 @@
+{{- range .Values.localPath.storageClasses }}
+---
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: {{ .name }}
+provisioner: rancher.io/local-path
+volumeBindingMode: {{ .volumeBindingMode }}
+reclaimPolicy: {{ .reclaimPolicy }}
+{{- if .pathPattern }}
+parameters:
+  pathPattern: {{ .pathPattern | quote }}
+{{- end }}
+{{- end }}

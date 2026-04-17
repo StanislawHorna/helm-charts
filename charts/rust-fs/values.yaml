@@ -1,0 +1,25 @@
+
+rustFS:
+  image:
+    tag: 1.0.0-alpha.90
+  serverDomains: "example.com"
+  obsLogLevel: "debug"
+  alloyAddress: "http://alloy-svc.lgtm-stack.svc.cluster.local:4318"
+  gateway:
+    enabled: true
+    gatewayName: traefik-gateway
+    gatewayNamespace: traefik
+    allowHttp: false
+    apiHostname: "api.example.com"
+    consoleHostname: "console.example.com"
+  storage:
+    size: 200Gi
+    storageClass: nfs-storage-static
+
+resources:
+  requests:
+    memory: "256Mi"
+    cpu: "100m"
+  limits:
+    memory: "1Gi"
+    cpu: "1"
