@@ -24,7 +24,7 @@
     "description": "Official dashboard for Traefik on Kubernetes",
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
+    "graphTooltip": 1,
     "links": [],
     "panels": [
         {
@@ -1513,8 +1513,8 @@
     },
     "timepicker": {},
     "timezone": "browser",
-    "title": "Traefik Official Kubernetes Dashboard",
+    "title": "Traefik",
     "uid": "n5bu_kv4k",
-    "version": 1,
+    "version": 2,
     "weekStart": ""
 }

@@ -17,7 +17,7 @@
     },
     "editable": true,
     "fiscalYearStartMonth": 0,
-    "graphTooltip": 0,
+    "graphTooltip": 1,
     "links": [],
     "panels": [
         {
@@ -1091,7 +1091,8 @@
     "preload": false,
     "schemaVersion": 42,
     "tags": [
-        "Loki"
+        "Loki",
+        "LGTM"
     ],
     "templating": {
         "list": [
@@ -1195,6 +1196,6 @@
     "timezone": "Europe/Warsaw",
     "title": "Loki",
     "uid": "da584d03-f7e0-430a-84ae-c60dba3eca2c",
-    "version": 1,
+    "version": 2,
     "weekStart": ""
 }
