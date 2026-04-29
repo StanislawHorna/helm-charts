@@ -42,3 +42,12 @@ Usage: {{ include "lgtm-stack.add24h" "48h" }} -> "72h"
 {{- define "lgtm-stack.Mimir.DefaultLocalPath" -}}
   /data
 {{- end -}}
+
+{{/*
+Helper to to calculate max_query_parallelism and memcached max_idle_connections based on CPU limits.
+Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
+*/}}
+{{- define "lgtm-stack.Mimir.parallelism" -}}
+  {{- $cpu := .Values.mimir.resources.limits.cpu | default "2" | toString | trimSuffix "m" | int -}}
+  {{- printf "%v" (mul $cpu 2) -}}
+{{- end -}}

@@ -22,10 +22,9 @@ limits:
   # WHAT: Maximum number of active time series a single tenant can send.
   # WHY: Set to 0 (unlimited) and don't hit artificial ceilings in a trusted environment.
   max_global_series_per_user: 0 
-  
+
   # WHAT: The maximum number of parallel workers that can execute a single query.
-  # WHY: Set to 128 for high performance. This allows Mimir to heavily parallelize complex queries across data.
-  max_query_parallelism: 128
+  max_query_parallelism: {{ include "lgtm-stack.Mimir.parallelism" . }}
   
   # WHAT: The time window during which Mimir will accept metrics with older timestamps than the most recently received one.
   # WHY: 10m is standard to accommodate slight clock drifts or delays in Prometheus/Agent sending data.
@@ -96,11 +95,7 @@ blocks_storage:
 
 # Configure the Query Frontend to use the Results Cache
 frontend:
-  {{ if .Values.mimir.longTermStorage.enabled }}
-  # WHAT: Breaks large user queries (e.g., "give me 30 days of data") into smaller sub-queries of this size.
-  # WHY: 24h means a 30-day query becomes 30 parallel 1-day queries. (Note: Setting this to 1h is usually better for utilizing all 128 parallel workers).
-  split_queries_by_interval: 24h
-  {{ end }}
+  split_queries_by_interval: 1h
   
   # WHAT: Logs any query that takes longer than 10 seconds for troubleshooting.
   log_queries_longer_than: 10s
@@ -150,6 +145,5 @@ backend: memcached
 memcached:
   addresses: 127.0.0.1:11211
   timeout: 500ms
-  # WHY: Set to 128 to ensure the connection pool matches your max_query_parallelism (128), preventing bottleneck queues.
-  max_idle_connections: 128
+  max_idle_connections: {{ include "lgtm-stack.Mimir.parallelism" . }}
 {{ end }}
