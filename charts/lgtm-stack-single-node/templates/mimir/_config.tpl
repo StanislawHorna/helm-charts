@@ -119,8 +119,8 @@ querier:
 
 query_scheduler:
   # WHAT: Limits the maximum number of queries a single tenant can queue up at once.
-  # WHY: 2048 prevents a rogue script or heavy dashboard refresh from locking up the entire Mimir query system.
-  max_outstanding_requests_per_tenant: 2048
+  # WHY: 87600 allows to query up to 10 years of hourly blocks without hitting an artificial ceiling in a trusted environment.
+  max_outstanding_requests_per_tenant: 87600
 
 ingester:
   ring:
