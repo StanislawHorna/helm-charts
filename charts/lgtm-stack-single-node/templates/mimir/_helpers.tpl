@@ -45,7 +45,7 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
 */}}
 {{- define "lgtm-stack.Mimir.parallelism" -}}
   {{- $cpu := .Values.mimir.resources.limits.cpu | default "2" | toString | trimSuffix "m" | int -}}
-  {{- printf "%v" (mul $cpu 4) -}}
+  {{- printf "%v" (mul $cpu 2) -}}
 {{- end -}}
 
 {{- define "lgtm-stack.Mimir.defaultLocalPath" -}}
@@ -66,18 +66,12 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
   {{- /* 1. Math: Total hours in a year (8,760) divided by fraction, to get amount of requests needed to get a year data */ -}}
   {{- $chunksPerSeries := div 8760 $split -}}
   
-  {{- /* 2. Multiply by a parallelism */ -}}
-  {{- $calculated := mul $chunksPerSeries (include "lgtm-stack.Mimir.parallelism" .) -}}
+  {{- /* 2. Multiply by a 30-panel safety factor per dashboard */ -}}
+  {{- $calculated := mul $chunksPerSeries 30 -}}
 
-  {{- /* 3. Multiply by a 30-panel safety factor per dashboard */ -}}
-  {{- $calculated := mul $calculated 30 -}}
-
-  {{- /* 5. Multiply by a 10 safety factor to allow long term queries for multiple users */ -}}
-  {{- $calculated := mul $calculated 10 -}}
-  
-  {{- /* 6. Enforce a sensible floor limit of 4,096 */ -}}
+  {{- /* 3. Enforce a sensible floor limit of 4,096 */ -}}
   {{- $calculated := max 4096 $calculated -}}
 
-  {{- /* 7. Enforce a ceiling limit of 1,000,000 */ -}}
+  {{- /* 4. Enforce a ceiling limit of 1,000,000 */ -}}
   {{- min 1000000 $calculated -}}
 {{- end -}}
