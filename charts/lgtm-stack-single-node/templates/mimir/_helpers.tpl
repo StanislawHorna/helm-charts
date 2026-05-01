@@ -69,8 +69,8 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
   {{- /* 2. Multiply by a parallelism */ -}}
   {{- $calculated := mul $chunksPerSeries (include "lgtm-stack.Mimir.parallelism" .) -}}
 
-  {{- /* 3. Multiply by a 50-panel safety factor per dashboard */ -}}
-  {{- $calculated := mul $calculated 50 -}}
+  {{- /* 3. Multiply by a 100-panel safety factor per dashboard */ -}}
+  {{- $calculated := mul $calculated 100 -}}
 
   {{- /* 3. Multiply by a 100 safety factor to allow long term queries for multiple users */ -}}
   {{- $calculated := mul $calculated 100 -}}
