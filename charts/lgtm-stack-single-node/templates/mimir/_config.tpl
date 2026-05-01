@@ -114,7 +114,7 @@ querier:
   {{ end }}
   
   # WHAT: The maximum number of concurrent sub-queries a single Querier worker will process.
-  # WHY: 16 prevents a single complex query from causing out-of-memory (OOM) crashes on the worker.
+  # WHY: Prevents a single complex query from causing out-of-memory (OOM) crashes on the worker.
   max_concurrent: {{ include "lgtm-stack.Mimir.parallelism" . }}
 
 query_scheduler:

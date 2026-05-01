@@ -53,7 +53,7 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
 {{- end -}}
 
 {{- define "lgtm-stack.Mimir.querySplit" -}}
-  24h
+  1h
 {{- end -}}
 
 {{- define "lgtm-stack.Mimir.maxOutstandingRequestsPerTenant" -}}
