@@ -33,7 +33,7 @@ limits:
   {{ if .Values.mimir.longTermStorage.enabled}}
   # WHAT: Instructs the Querier to check the local Ingester (RAM/Disk) for data up to retention specified in values.yaml + 24h.
   # WHY: Matches `retention_period`. It guarantees Mimir will find the recent data locally.
-  query_ingesters_within: {{ include "lgtm-stack.add24h" (include "lgtm-stack.retentionHours" .Values.mimir.longTermStorage.localCacheRetention) }}
+  query_ingesters_within: {{ include "lgtm-stack.add24h" (include "lgtm-stack.Mimir.hotStorage.retentionHours" .Values.mimir.longTermStorage.localCacheRetention) }}
   {{ end }}
   
   # WHAT: Snaps query start/end times to a standard time grid (e.g., exactly on the minute).
@@ -56,13 +56,13 @@ common:
     # Fallback to local disk if S3 is disabled.
     backend: filesystem
     filesystem:
-      dir: {{ include "lgtm-stack.Mimir.DefaultLocalPath" . }}/mimir-storage
+      dir: {{ include "lgtm-stack.Mimir.defaultLocalPath" . }}/mimir-storage
   {{ end }}
 
 blocks_storage:
   storage_prefix: blocks
   tsdb:
-    dir: {{ include "lgtm-stack.Mimir.DefaultLocalPath" . }}/ingester
+    dir: {{ include "lgtm-stack.Mimir.defaultLocalPath" . }}/ingester
     {{ if .Values.mimir.longTermStorage.enabled}}
     # WHAT: The time span of a single TSDB block before it is "cut", finalized, and shipped to S3.
     # WHY: Set to 1h to ensure a strict 1-hour Recovery Point Objective (RPO) in case of catastrophic pod failure.
@@ -70,7 +70,7 @@ blocks_storage:
     
     # WHAT: How long the finalized blocks stay on the local disk of the Ingester.
     # WHY: This acts as a massive local cache, making queries for recent data lightning fast because they don't require S3 network calls.
-    retention_period: {{ include "lgtm-stack.add24h" (include "lgtm-stack.retentionHours" .Values.mimir.longTermStorage.localCacheRetention) }}
+    retention_period: {{ include "lgtm-stack.add24h" (include "lgtm-stack.Mimir.hotStorage.retentionHours" .Values.mimir.longTermStorage.localCacheRetention) }}
     {{ end }}
       
   # --- Caching Configuration (Memcached sidecar) ---
@@ -78,7 +78,7 @@ blocks_storage:
   bucket_store:
   {{ if .Values.mimir.longTermStorage.enabled }}
     # WHERE: Local directory for the Store-Gateway to keep S3 block indexes.
-    sync_dir: {{ include "lgtm-stack.Mimir.DefaultLocalPath" . }}/store-gateway
+    sync_dir: {{ include "lgtm-stack.Mimir.defaultLocalPath" . }}/store-gateway
   {{ end }}
   
     # WHAT: Caches the actual compressed metric data chunks fetched from S3.
@@ -95,7 +95,7 @@ blocks_storage:
 
 # Configure the Query Frontend to use the Results Cache
 frontend:
-  split_queries_by_interval: 1h
+  split_queries_by_interval: {{ include "lgtm-stack.Mimir.querySplit" . }}
   
   # WHAT: Logs any query that takes longer than 10 seconds for troubleshooting.
   log_queries_longer_than: 10s
@@ -108,19 +108,19 @@ frontend:
 querier:
 
   {{ if .Values.mimir.longTermStorage.enabled}}
-  # WHAT: Tells the querier to ONLY fetch data from S3 (Store-Gateway) if the requested data is older than 8 days.
-  # WHY: Works with your 9-day local retention to ensure the querier relies entirely on fast local disk for the last 8-9 days of metrics.
-  query_store_after: {{ include "lgtm-stack.retentionHours" .Values.mimir.longTermStorage.localCacheRetention }}
+  # WHAT: Tells the querier to ONLY fetch data from S3 (Store-Gateway) if the requested data is older than couple days.
+  # WHY: Works with local retention to ensure the querier relies entirely on fast local disk for the last couple of days of metrics.
+  query_store_after: {{ include "lgtm-stack.Mimir.hotStorage.retentionHours" .Values.mimir.longTermStorage.localCacheRetention }}
   {{ end }}
   
   # WHAT: The maximum number of concurrent sub-queries a single Querier worker will process.
   # WHY: 16 prevents a single complex query from causing out-of-memory (OOM) crashes on the worker.
-  max_concurrent: 16
+  max_concurrent: {{ include "lgtm-stack.Mimir.parallelism" . }}
 
 query_scheduler:
   # WHAT: Limits the maximum number of queries a single tenant can queue up at once.
-  # WHY: 87600 allows to query up to 10 years of hourly blocks without hitting an artificial ceiling in a trusted environment.
-  max_outstanding_requests_per_tenant: 87600
+  # WHY: Allows to query hourly blocks without hitting an artificial ceiling in a trusted environment.
+  max_outstanding_requests_per_tenant: {{ include "lgtm-stack.Mimir.maxOutstandingRequestsPerTenant" . }}
 
 ingester:
   ring:
@@ -130,7 +130,7 @@ ingester:
 
 compactor:
   # WHERE: Local directory for the compactor to download and merge blocks.
-  data_dir: {{ include "lgtm-stack.Mimir.DefaultLocalPath" . }}/compactor
+  data_dir: {{ include "lgtm-stack.Mimir.defaultLocalPath" . }}/compactor
   
   {{ if .Values.mimir.longTermStorage.enabled}}
   # WHAT: The progression of block sizes the compactor creates over time.

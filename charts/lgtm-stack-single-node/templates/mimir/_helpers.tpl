@@ -1,8 +1,8 @@
 {{/*
 Helper to convert duration to hours (minimum 1h)
-Usage: {{ include "lgtm-stack.retentionHours" "1d" }}
+Usage: {{ include "lgtm-stack.Mimir.hotStorage.retentionHours" "1d" }}
 */}}
-{{- define "lgtm-stack.retentionHours" -}}
+{{- define "lgtm-stack.Mimir.hotStorage.retentionHours" -}}
   {{- $val := . | lower -}}
   {{- $num := (regexReplaceAll "[^0-9]" $val "") | atoi -}}
   {{- $unit := (regexReplaceAll "[0-9]" $val "") -}}
@@ -39,15 +39,40 @@ Usage: {{ include "lgtm-stack.add24h" "48h" }} -> "72h"
   {{- printf "%vh" $newTotal -}}
 {{- end -}}
 
-{{- define "lgtm-stack.Mimir.DefaultLocalPath" -}}
-  /data
-{{- end -}}
-
 {{/*
 Helper to to calculate max_query_parallelism and memcached max_idle_connections based on CPU limits.
 Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
 */}}
 {{- define "lgtm-stack.Mimir.parallelism" -}}
   {{- $cpu := .Values.mimir.resources.limits.cpu | default "2" | toString | trimSuffix "m" | int -}}
-  {{- printf "%v" (mul $cpu 2) -}}
+  {{- printf "%v" (mul $cpu 4) -}}
+{{- end -}}
+
+{{- define "lgtm-stack.Mimir.defaultLocalPath" -}}
+  /data
+{{- end -}}
+
+{{- define "lgtm-stack.Mimir.querySplit" -}}
+  1h
+{{- end -}}
+
+{{- define "lgtm-stack.Mimir.maxOutstandingRequestsPerTenant" -}}
+  {{- /* Get the querySplit value (e.g., "1h", "24h", "1d") */ -}}
+  {{- $split := include "lgtm-stack.Mimir.querySplit" . | regexReplaceAll "h" "" | atoi  -}}
+  
+  {{- /* Prevent division by zero */ -}}
+  {{- $split = max 1 $split -}}
+  
+  {{- /* 1. Math: Total hours in a year (8,760) divided by fraction, to get amount of requests needed to get a year data */ -}}
+  {{- $chunksPerSeries := div 8760 $split -}}
+  
+  {{- /* 2. Multiply by a parallelism */ -}}
+  {{- $calculated := mul $chunksPerSeries (include "lgtm-stack.Mimir.parallelism" .) -}}
+
+
+  {{- /* 3. Multiply by a 30-panel safety factor per dashboard */ -}}
+  {{- $calculated := mul $calculated 30 -}}
+  
+  {{- /* 4. Enforce a sensible floor limit of 4,096 */ -}}
+  {{- max 4096 $calculated -}}
 {{- end -}}
