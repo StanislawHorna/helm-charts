@@ -53,7 +53,7 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
 {{- end -}}
 
 {{- define "lgtm-stack.Mimir.querySplit" -}}
-  1h
+  24h
 {{- end -}}
 
 {{- define "lgtm-stack.Mimir.maxOutstandingRequestsPerTenant" -}}
@@ -69,15 +69,15 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
   {{- /* 2. Multiply by a parallelism */ -}}
   {{- $calculated := mul $chunksPerSeries (include "lgtm-stack.Mimir.parallelism" .) -}}
 
-  {{- /* 3. Multiply by a 100-panel safety factor per dashboard */ -}}
-  {{- $calculated := mul $calculated 100 -}}
+  {{- /* 3. Multiply by a 30-panel safety factor per dashboard */ -}}
+  {{- $calculated := mul $calculated 30 -}}
 
-  {{- /* 4. Multiply by a 8760 sub-chunks per panel */ -}}
-  {{- $calculated := mul $calculated 8760 -}}
-
-  {{- /* 5. Multiply by a 100 safety factor to allow long term queries for multiple users */ -}}
-  {{- $calculated := mul $calculated 100 -}}
+  {{- /* 5. Multiply by a 10 safety factor to allow long term queries for multiple users */ -}}
+  {{- $calculated := mul $calculated 10 -}}
   
-  {{- /* 6. Enforce a sensible floor limit of 8,192 */ -}}
-  {{- max 8192 $calculated -}}
+  {{- /* 6. Enforce a sensible floor limit of 4,096 */ -}}
+  {{- $calculated := max 4096 $calculated -}}
+
+  {{- /* 7. Enforce a ceiling limit of 1,000,000 */ -}}
+  {{- min 1000000 $calculated -}}
 {{- end -}}
