@@ -72,9 +72,12 @@ Usage: {{ include "lgtm-stack.Mimir.parallelism" . }} -> returns double
   {{- /* 3. Multiply by a 100-panel safety factor per dashboard */ -}}
   {{- $calculated := mul $calculated 100 -}}
 
-  {{- /* 3. Multiply by a 100 safety factor to allow long term queries for multiple users */ -}}
+  {{- /* 4. Multiply by a 8760 sub-chunks per panel */ -}}
+  {{- $calculated := mul $calculated 8760 -}}
+
+  {{- /* 5. Multiply by a 100 safety factor to allow long term queries for multiple users */ -}}
   {{- $calculated := mul $calculated 100 -}}
   
-  {{- /* 4. Enforce a sensible floor limit of 4,096 */ -}}
-  {{- max 4096 $calculated -}}
+  {{- /* 6. Enforce a sensible floor limit of 8,192 */ -}}
+  {{- max 8192 $calculated -}}
 {{- end -}}
