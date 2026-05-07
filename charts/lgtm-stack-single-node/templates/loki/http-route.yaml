@@ -19,7 +19,7 @@ spec:
       {{- if .Values.loki.gateway.allowHttp }}
       backendRefs:
         - name: {{ include "lgtm-stack.componentSVC" . }}
-          port: 3000
+          port: 3100
       {{- else }}
       filters:
         - type: RequestRedirect
@@ -48,5 +48,5 @@ spec:
             value: /
       backendRefs:
         - name: {{ include "lgtm-stack.componentSVC" . }}
-          port: 3000
+          port: 3100
 {{ end }}
