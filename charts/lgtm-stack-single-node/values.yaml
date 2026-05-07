@@ -43,6 +43,12 @@ loki:
     limits:
       memory: "512Mi"
       cpu: "500m"
+  rootUrl: https://loki.example.com
+  gateway:
+    enabled: true
+    gatewayName: traefik-gateway
+    gatewayNamespace: traefik
+    allowHttp: false
   cacheResources:
     requests:
       memory: "256Mi"

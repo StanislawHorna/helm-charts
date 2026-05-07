@@ -1,0 +1,52 @@
+{{ if .Values.loki.gateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "lgtm-stack.name" . }}-loki-http-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.loki.gateway.gatewayName}}
+      namespace: {{ .Values.loki.gateway.gatewayNamespace }}
+      sectionName: web
+  hostnames:
+    - {{ .Values.loki.rootUrl | replace "https://" "" | replace "http://" "" }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      {{- if .Values.loki.gateway.allowHttp }}
+      backendRefs:
+        - name: {{ include "lgtm-stack.componentSVC" . }}
+          port: 3000
+      {{- else }}
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            port: 443
+            statusCode: 301
+      {{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "lgtm-stack.name" . }}-loki-https-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.loki.gateway.gatewayName }}
+      namespace: {{ .Values.loki.gateway.gatewayNamespace }}
+      sectionName: websecure
+  hostnames:
+    - {{ .Values.loki.rootUrl | replace "https://" "" | replace "http://" "" }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: {{ include "lgtm-stack.componentSVC" . }}
+          port: 3000
+{{ end }}
