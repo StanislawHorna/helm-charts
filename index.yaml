@@ -505,6 +505,28 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.0.1/lgtm-stack-single-node-0.0.1.tgz
     version: 0.0.1
+  omada-exporter:
+  - apiVersion: v2
+    appVersion: 25.36.0
+    created: "2026-05-10T21:11:16.635184123Z"
+    description: A Helm chart for the TP-Link Omada exporter.
+    digest: c492c4ebba165f66884d7770826e788c1a62081c1308aacb186d39acab29035b
+    name: omada-exporter
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/omada-exporter-0.0.1/omada-exporter-0.0.1.tgz
+    version: 0.0.1
+  pve-exporter:
+  - apiVersion: v2
+    appVersion: 3.5.5
+    created: "2026-05-10T21:11:16.815641193Z"
+    description: A Helm chart for the Proxmox VE exporter.
+    digest: 7df7acdc283dc0c6a1733a839fb8a398ddfd7908cd79dbc7db3bc8b1246e79af
+    name: pve-exporter
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/pve-exporter-0.0.2/pve-exporter-0.0.2.tgz
+    version: 0.0.2
   rust-fs:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -572,6 +594,17 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/storage-classes-0.0.1/storage-classes-0.0.1.tgz
     version: 0.0.1
+  synology-exporter:
+  - apiVersion: v2
+    appVersion: 3.5.5
+    created: "2026-05-10T21:11:16.980277499Z"
+    description: A Helm chart for the Synology exporter.
+    digest: 603af04a676eee48199c181ec836f5b3642c4b7497dc88306f5a868a7fcd32c0
+    name: synology-exporter
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/synology-exporter-0.0.1/synology-exporter-0.0.1.tgz
+    version: 0.0.1
   traefik-api-gateway:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -617,4 +650,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-05-07T19:49:22.828677328Z"
+generated: "2026-05-10T21:11:16.980362818Z"
