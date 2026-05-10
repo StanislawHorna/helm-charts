@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "omada-exporter.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "omada-exporter.appName" . }}
+spec:
+  selector:
+    app: {{ include "omada-exporter.appName" . }}
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 8080
+      targetPort: 8080

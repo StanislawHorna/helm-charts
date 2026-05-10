@@ -1,0 +1,20 @@
+{{- if include "omada-exporter.hasServiceMonitor" . }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: omada-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "omada-exporter.appName" . }}
+  endpoints:
+    - port: metrics
+      path: /metrics
+      interval: 15s
+      relabelings:
+        - targetLabel: instance
+          replacement: {{ .Values.omada.controllerName }}
+{{- end }}

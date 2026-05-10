@@ -1,0 +1,27 @@
+{{- if include "pve-exporter.hasServiceMonitor" . }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: pve-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "pve-exporter.appName" . }}
+  endpoints:
+  {{- range .Values.pveServers }}
+  - port: metrics
+    path: /pve
+    interval: 15s
+    params:
+      module: [{{ .name }}]
+      cluster: ["1"]
+      node: ["1"]
+      target: [{{ .ip }}]
+    relabelings:
+      - targetLabel: instance
+        replacement: {{ .name }}
+  {{- end }}
+{{- end }}

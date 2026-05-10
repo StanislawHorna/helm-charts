@@ -1,0 +1,28 @@
+image:
+  tag: 3.5.5
+resources:
+  requests:
+    memory: "32Mi"
+    cpu: "50m"
+  limits:
+    memory: "64Mi"
+    cpu: "100m"
+
+externalSecret:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "pve-cluster-credentials"
+  user: "PVE_USER"
+  tokenName: "PVE_TOKEN_NAME"
+  tokenValue: "PVE_TOKEN_VALUE"
+  verifySsl: false
+
+pveServers:
+  - name: "pve-01"
+    ip: "192.168.0.101"
+    externalSecret:
+      kvName: "pve/pve-01"
+  - name: "pve-02"
+    ip: "192.168.0.102"
+    externalSecret:
+      kvName: "pve/pve-02"

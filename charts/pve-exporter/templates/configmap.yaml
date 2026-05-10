@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: pve-exporter-config
+  namespace: {{ .Release.Namespace }}
+data:
+  pve.yml: |
+{{- range .Values.pveServers }}
+    {{ .name }}:
+      user: {{ .user | default "user" | quote }}
+      token_name: {{ .tokenName | default "token_name" | quote }}
+      token_value: {{ .tokenValue | default "token_secret" | quote }}
+      verify_ssl: {{ .verifySsl | default false }}
+{{- end }}

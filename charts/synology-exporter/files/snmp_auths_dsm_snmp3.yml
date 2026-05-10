@@ -1,0 +1,8 @@
+dsm_snmp3:
+  version: 3
+  security_level: authPriv
+  username: ${DSM_USERNAME}
+  password: ${DSM_PASSWORD}
+  auth_protocol: SHA
+  priv_protocol: DES
+  priv_password: ${DSM_PRIV_PASSWORD}

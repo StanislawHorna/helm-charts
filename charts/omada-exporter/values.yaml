@@ -1,0 +1,28 @@
+image:
+  tag: 26.19.0
+resources:
+  requests:
+    memory: "16Mi"
+    cpu: "20m"
+  limits:
+    memory: "64Mi"
+    cpu: "100m"
+
+loki:
+  logLevel: "info"
+  timezone: "Europe/Warsaw"
+  url: "http://loki-svc.lgtm-stack.svc.cluster.local:3100"
+
+externalSecret:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "omada-controller-credentials"
+  omadaClientIdKey: "OMADA_CLIENT_ID"
+  omadaClientSecret: "OMADA_CLIENT_SECRET"
+  omadaUsername: "OMADA_USERNAME"
+  omadaPassword: "OMADA_PASSWORD"
+  omadaSiteName: "OMADA_SITE_NAME"
+
+omada:
+  controllerName: "Omada"
+  controllerUrl: "http://192.168.0.100:8088"

@@ -1,0 +1,27 @@
+{{- if include "synology-exporter.hasServiceMonitor" . }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: synology-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "synology-exporter.appName" . }}
+  endpoints:
+  {{- range .Values.synologyDevices }}
+  - port: metrics
+    path: /snmp
+    interval: 15s
+    params:
+      module: [synology]
+      auth: [{{ .name }}]
+      target: [{{ .ip }}]
+    relabelings:
+      - replacement: {{ .name }}
+        targetLabel: instance
+
+  {{- end }}
+{{- end }}

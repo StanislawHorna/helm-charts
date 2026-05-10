@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "pve-exporter.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "pve-exporter.appName" . }}
+spec:
+  selector:
+    app: {{ include "pve-exporter.appName" . }}
+  ports:
+    - name: metrics
+      protocol: TCP
+      port: 9221
+      targetPort: 9221

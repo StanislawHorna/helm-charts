@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: synology-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "synology-exporter.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "synology-exporter.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "synology-exporter.appName" . }}
+    spec:
+      volumes:
+      {{- if .Values.externalSecret.enabled }}
+        - name: snmp-config
+          secret:
+            secretName: dsm-exporter-config
+      {{- end }}
+      containers:
+      - name: synology-exporter
+        image: prom/snmp-exporter:{{ .Values.image.tag }}
+        args:
+          - "--config.expand-environment-variables"
+          - "--config.file=/etc/snmp_exporter/snmp.yml"
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        
+        ports:
+        - name: metrics
+          containerPort: 9116
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9116
+          initialDelaySeconds: 5
+        
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9116
+          initialDelaySeconds: 3
+        
+        volumeMounts:
+        - name: snmp-config
+          mountPath: /etc/snmp_exporter
+          readOnly: true

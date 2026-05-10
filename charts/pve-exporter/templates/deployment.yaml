@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pve-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "pve-exporter.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "pve-exporter.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "pve-exporter.appName" . }}
+    spec:
+      volumes:
+      - name: pve-exporter-config
+        {{- if .Values.externalSecret.enabled }}
+        secret:
+          secretName: pve-exporter-config
+        {{- else }}
+        configMap:
+          name: pve-exporter-config
+        {{- end }}
+      
+      containers:
+      - name: pve-exporter
+        image: prompve/prometheus-pve-exporter:{{ .Values.image.tag }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+        - name: metrics
+          containerPort: 9221
+        
+        volumeMounts:
+        - name: pve-exporter-config
+          mountPath: /etc/prometheus
+          readOnly: true
+      
+        env:
+        - name: PVE_VERIFY_SSL
+          value: 'false'
+        
+        livenessProbe:
+          httpGet:
+            path: /
+            port: 9221
+          initialDelaySeconds: 5
+          periodSeconds: 10
+        
+        readinessProbe:
+          httpGet:
+            path: /
+            port: 9221
+          initialDelaySeconds: 3
+          periodSeconds: 5

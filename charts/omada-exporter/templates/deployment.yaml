@@ -1,0 +1,55 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: omada-exporter
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "omada-exporter.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "omada-exporter.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "omada-exporter.appName" . }}
+    spec:
+      containers:
+      - name: omada-exporter
+        image: ghcr.io/stanislawhorna/omada-exporter-go:{{ .Values.image.tag }}
+        resources:
+          {{- toYaml .Values.resources | nindent 10 }}
+        ports:
+        - name: metrics
+          containerPort: 8080
+        
+        envFrom:
+        - secretRef:
+            name: omada-secrets
+        
+        env:
+          - name: OMADA_URL
+            value: {{ .Values.omada.controllerUrl }}
+          - name: LOKI_URL
+            value: {{ .Values.loki.url }}
+          - name: LOG_LEVEL
+            value: {{ .Values.loki.logLevel }}
+          - name: TZ
+            value: {{ .Values.loki.timezone }}
+          - name: LOKI_APP_VERSION
+            value: {{ .Values.image.tag }}
+
+        livenessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 5
+          periodSeconds: 15
+        
+        readinessProbe:
+          httpGet:
+            path: /metrics
+            port: 8080
+          initialDelaySeconds: 3
+          periodSeconds: 15
