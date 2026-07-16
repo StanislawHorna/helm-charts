@@ -597,6 +597,16 @@ entries:
   synology-exporter:
   - apiVersion: v2
     appVersion: 3.5.5
+    created: "2026-07-16T20:40:21.382200408Z"
+    description: A Helm chart for the Synology exporter.
+    digest: 03dade6bdeb2f6c1ba9db3ecbba2c152617d259083c83bd3b0ab77b80301fa38
+    name: synology-exporter
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/synology-exporter-0.0.2/synology-exporter-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 3.5.5
     created: "2026-05-10T21:11:16.980277499Z"
     description: A Helm chart for the Synology exporter.
     digest: 603af04a676eee48199c181ec836f5b3642c4b7497dc88306f5a868a7fcd32c0
@@ -650,4 +660,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-05-10T21:11:16.980362818Z"
+generated: "2026-07-16T20:40:21.38224855Z"
