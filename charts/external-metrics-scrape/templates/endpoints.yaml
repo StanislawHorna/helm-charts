@@ -1,0 +1,20 @@
+{{- $root := . -}}
+{{- range $root.Values.scrapeConfigs }}
+---
+apiVersion: discovery.k8s.io/v1
+kind: EndpointSlice
+metadata:
+  name: {{ .name }}-slice
+  namespace: {{ $root.Release.Namespace }}
+  labels:
+    kubernetes.io/service-name: {{ .name }}-svc
+    endpointslice.kubernetes.io/managed-by: {{ $root.Release.Service }}
+addressType: IPv4
+endpoints:
+  - addresses:
+      - {{ .ip }}
+ports:
+  - name: {{ .name }}-http-metrics
+    port: {{ .port }}
+    protocol: TCP
+{{- end }}

@@ -1,0 +1,21 @@
+# serviceMonitorLabels defines the labels to apply to the generated ServiceMonitors.
+# This ensures that Prometheus Operator (configured to select specific releases) selects these resources.
+serviceMonitorLabels:
+  release: prometheus
+
+# scrapeConfigs is a list of external endpoints to scrape.
+# Each entry will automatically create a headless Service, a corresponding EndpointSlice pointing to the external IP,
+# and a ServiceMonitor targeting the Service for Prometheus to scrape.
+scrapeConfigs:
+  - name: home-assistant
+    scrape_interval: 15s
+    path: /api/prometheus
+    scheme: http
+    ip: 192.168.1.100
+    port: 8123
+  - name: smart-router
+    scrape_interval: 30s
+    path: /metrics
+    scheme: http
+    ip: 192.168.1.1
+    port: 9100

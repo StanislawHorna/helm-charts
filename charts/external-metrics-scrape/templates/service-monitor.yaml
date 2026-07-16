@@ -1,0 +1,22 @@
+{{- $root := . -}}
+{{- if include "external-metrics-scrape.hasServiceMonitor" $root }}
+{{- range $root.Values.scrapeConfigs }}
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ .name }}-monitor
+  namespace: {{ $root.Release.Namespace }}
+  labels:
+    {{- toYaml $root.Values.serviceMonitorLabels | nindent 4 }}
+spec:
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  endpoints:
+    - port: {{ .name }}-http-metrics
+      interval: {{ .scrape_interval }}
+      path: {{ .path }}
+      scheme: {{ .scheme }}
+{{- end }}
+{{- end }}

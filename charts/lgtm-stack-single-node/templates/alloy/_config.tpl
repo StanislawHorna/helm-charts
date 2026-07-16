@@ -65,6 +65,7 @@ loki.source.kubernetes_events "events" {
 
 // Discover ServiceMonitors in the cluster
 prometheus.operator.servicemonitors "all" {
+  kubernetes_role = "endpointslice"
   forward_to = [prometheus.remote_write.mimir.receiver]
 }
 

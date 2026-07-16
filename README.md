@@ -20,6 +20,8 @@ Explore our collection of production-ready charts.
 | **[`omada-exporter`](./charts/omada-exporter)**                 | Prometheus exporter for **TP-Link Omada Controller**. Integrates with Grafana Loki for logs and External Secrets Operator for credentials.                                     | [Details](./charts/omada-exporter) • [Values](./charts/omada-exporter/values.yaml)                 |
 | **[`pve-exporter`](./charts/pve-exporter)**                     | Prometheus exporter for **Proxmox VE**. Supports multi-server environments and automated credential retrieval via External Secrets Operator.                                   | [Details](./charts/pve-exporter) • [Values](./charts/pve-exporter/values.yaml)                     |
 | **[`synology-exporter`](./charts/synology-exporter)**             | Prometheus exporter for **Synology NAS** devices leveraging SNMP v3. Supports multiple devices and automated credential retrieval via External Secrets Operator.                | [Details](./charts/synology-exporter) • [Values](./charts/synology-exporter/values.yaml)           |
+| **[`external-metrics-scrape`](./charts/external-metrics-scrape)** | A Helm chart for scraping external metrics from non-Kubernetes targets using Prometheus Operator's `ServiceMonitor` and `EndpointSlice` resources. | [Details](./charts/external-metrics-scrape) • [Values](./charts/external-metrics-scrape/values.yaml) |
+
 
 ---
 
