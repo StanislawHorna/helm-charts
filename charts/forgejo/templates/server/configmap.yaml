@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: forgejo-config
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: forgejo
+data:
+  FORGEJO_ADMIN_USERNAME: {{ .Values.forgejoBootstrap.adminEmail | default "admin" }}
+  FORGEJO_ADMIN_EMAIL: {{ .Values.forgejoBootstrap.adminEmail | default "admin@example.com" }}
+  
+  FORGEJO__security__INSTALL_LOCK: "true"
+
+  # Force Forgejo to handle registration via external providers only
+  FORGEJO__SERVICE__DISABLE_REGISTRATION: "false"
+  FORGEJO__SERVICE__ALLOW_ONLY_EXTERNAL_REGISTRATION: "true"
+  FORGEJO__SERVICE__SHOW_REGISTRATION_BUTTON: "false"
+  FORGEJO__SERVICE__ENABLE_AUTO_REGISTRATION: "true"
+  
+  FORGEJO__oauth2_client__UPDATE_AVATAR: "true"
+  FORGEJO__oauth2_client__ENABLE_AUTO_REGISTRATION: "true"
+  FORGEJO__oauth2_client__ACCOUNT_LINKING: "auto"
+  FORGEJO__oauth2_client__USERNAME: "preferred_username"
+
+  FORGEJO__server__ROOT_URL: {{ .Values.forgejo.rootUrl }} 
+  FORGEJO__server__DISABLE_SSH: "true"
+  FORGEJO__server__LFS_START_SERVER: "true"
+  FORGEJO__server__LOG_LEVEL: "info"
+  FORGEJO__server__ERROR_REPORTING__ENABLED: "true"
+  FORGEJO__server__ERROR_REPORTING__ENVIRONMENT: "k8s-dev"
+  FORGEJO__server__ERROR_REPORTING__SEND_PII: "false"
+
+  FORGEJO__server__LISTEN__HTTP: "0.0.0.0:9000"
+  FORGEJO__server__LISTEN__HTTPS: "0.0.0.0:9443"
+  FORGEJO__server__LISTEN__METRICS: "0.0.0.0:9300"
+  FORGEJO__server__WEB__PATH: "/"
+
+  FORGEJO__database__DB_TYPE: "postgres"
+  FORGEJO__database__HOST: "{{ include "forgejo.db.hostname" . }}"
+  FORGEJO__database__NAME: "{{ include "forgejo.db.databaseName" . }}"
+  FORGEJO__database__PORT: "5432"
+  FORGEJO__database__USER: "{{ include "forgejo.db.username" . }}"
+  FORGEJO__database__SSLMODE: "disable"
+
+  FORGEJO__repository__ROOT: "/data/git/repositories"
+  FORGEJO__repository__ALLOW_ADOPTION_OF_UNADOPTED_REPOSITORIES: "true"
+  FORGEJO__lfs__PATH: "/data/git/lfs"
+  FORGEJO__attachment__PATH: "/data/gitea/attachments"
+  FORGEJO__picture__AVATAR_UPLOAD_PATH: "/data/gitea/avatars"
+  FORGEJO__picture__REPOSITORY_AVATAR_UPLOAD_PATH: "/data/gitea/repo-avatars"
+  FORGEJO__packages__PATH: "/data/gitea/packages"
+  FORGEJO__actions__ARTIFACT_PATH: "/data/gitea/artifacts"
+
+  FORGEJO__email__PORT: "587"
+  FORGEJO__email__TIMEOUT: "30"
+  FORGEJO__email__USE_SSL: "false"
+  FORGEJO__email__USE_TLS: "false"
+  

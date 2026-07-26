@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "forgejo.server.serviceName" . }}
+  labels:
+    {{- include "forgejo.deployment.server.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ include "forgejo.server.http.port" . }}
+      targetPort: {{ include "forgejo.server.http.port" . }}
+      
+  selector:
+    {{- include "forgejo.deployment.server.labels" . | nindent 4 }}

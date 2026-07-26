@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "forgejo.server.appName" . }}
+  labels:
+    {{- include "forgejo.deployment.server.labels" . | nindent 4 }}
+spec:
+  replicas: 1 # Single node cluster requirement
+  strategy:
+    type: Recreate # Prevents multi-attach locks on NFS during updates
+  selector:
+    matchLabels:
+      {{- include "forgejo.deployment.server.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "forgejo.deployment.server.labels" . | nindent 8 }}
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: forgejo
+          image: "{{ .Values.forgejo.image.name }}:{{ .Values.forgejo.image.tag }}"
+          imagePullPolicy: {{ .Values.forgejo.image.pullPolicy }}
+          env:
+            {{- include "forgejo.server.env" . | nindent 12 }}
+          envFrom:
+            {{- include "forgejo.server.envFrom" . | nindent 12 }}
+          ports:
+            - name: http
+              containerPort: {{ include "forgejo.server.http.port" . }}
+              protocol: TCP
+          volumeMounts:
+            {{- include "forgejo.server.volumeMounts" . | nindent 12 }}
+          resources:
+            {{- .Values.forgejo.resources | toYaml | nindent 12 }}
+      volumes:
+        {{- include "forgejo.server.volumes" . | nindent 8 }}

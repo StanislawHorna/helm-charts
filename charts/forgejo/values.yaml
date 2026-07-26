@@ -1,0 +1,89 @@
+forgejo:
+  rootUrl: "https://forgejo.example.com"
+  image:
+    name: codeberg.org/forgejo/forgejo
+    tag: "15.0.5-rootless"
+    pullPolicy: IfNotPresent
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+  generateAuthentikOAuthSecrets:
+    enabled: true
+    authentikHost: "https://authentik.example.com"
+    kvPrefix: "authentik"
+
+forgejoRunner:
+  enabled: true
+  image:
+    name: code.forgejo.org/forgejo/runner
+    tag: "12.13.2"
+    pullPolicy: IfNotPresent
+  replicas: 1
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "250m"
+      memory: "256Mi"
+  dockerInDocker:
+    enabled: true
+    image:
+      name: docker
+      tag: "26-dind"
+      pullPolicy: IfNotPresent
+    resources:
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+      requests:
+        cpu: "250m"
+        memory: "256Mi"
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s-dev"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
+gateway:
+  enabled: true
+  allowHttp: false
+  hostname: forgejo.example.com
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+
+forgejoBootstrap:
+  adminEmail: "admin@example.com"
+  adminUsername: "admin"
+  kvPrefix: "forgejo"
+
+database:
+  storageClass: local-path-static
+  kvPrefix: "postgres"
+
+persistence:
+  repositoryFiles:
+    storageClass: "nfs-storage-static"
+    accessMode: ReadWriteMany
+    size: 50Gi
+  configFiles:
+    storageClass: "nfs-storage-static"
+    accessMode: ReadWriteOnce
+    size: 10Gi

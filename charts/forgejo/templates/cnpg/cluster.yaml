@@ -1,0 +1,21 @@
+{{- if include "forgejo.hasCNPGCluster" . }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "forgejo.db.clusterName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  instances: 1
+  
+  storage:
+    size: 5Gi
+    storageClass: {{ .Values.database.storageClass }}
+  
+  bootstrap:
+    initdb:
+      database: {{ include "forgejo.db.databaseName" . }}
+      owner: {{ include "forgejo.db.username" . }}
+      secret:
+        name: db-creds
+
+{{- end -}}

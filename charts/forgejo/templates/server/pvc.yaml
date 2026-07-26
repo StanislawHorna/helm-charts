@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: forgejo-data-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  storageClassName: {{ .Values.persistence.repositoryFiles.storageClass }}
+  accessModes:
+    - {{ .Values.persistence.repositoryFiles.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.repositoryFiles.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: forgejo-var-gitea-pvc
+  namespace: {{ .Release.Namespace }}
+spec:
+  storageClassName: {{ .Values.persistence.configFiles.storageClass }}
+  accessModes:
+    - {{ .Values.persistence.configFiles.accessMode }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.configFiles.size }}

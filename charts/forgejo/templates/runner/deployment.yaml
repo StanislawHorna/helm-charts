@@ -1,0 +1,150 @@
+{{- if .Values.forgejoRunner.enabled }}
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "forgejo.runner.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "forgejo.deployment.runner.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "forgejo.deployment.runner.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "forgejo.deployment.runner.labels" . | nindent 8 }}
+    spec:
+      initContainers:
+        - name: fetch-runner-token
+          image: curlimages/curl:8.7.1
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Fetching runner registration token from Forgejo API..."
+              
+              # Wait for Forgejo API to respond and fetch token
+              until RESPONSE=$(curl -s -f -X GET "${FORGEJO_INSTANCE_URL}/api/v1/admin/runners/registration-token" \
+                -H "Authorization: token ${ADMIN_PAT}" \
+                -H "Accept: application/json"); do
+                echo "Waiting for Forgejo API to be available..."
+                sleep 3
+              done
+
+              # Extract token value from JSON response
+              RUNNER_TOKEN=$(echo "$RESPONSE" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
+
+              if [ -z "$RUNNER_TOKEN" ]; then
+                echo "ERROR: Failed to extract runner token from API response!"
+                exit 1
+              fi
+
+              echo -n "${RUNNER_TOKEN}" > /shared/runner_token
+              echo "Token successfully retrieved and written to /shared/runner_token"
+          env:
+            - name: FORGEJO_INSTANCE_URL
+              value: "http://{{ include "forgejo.server.serviceName" . }}:3000"
+            - name: ADMIN_PAT
+              valueFrom:
+                secretKeyRef:
+                  name: forgejo-admin-token
+                  key: token
+          volumeMounts:
+            - name: shared-token
+              mountPath: /shared
+
+      containers:
+        # --- Forgejo Runner Daemon ---
+        - name: runner
+          image: {{ .Values.forgejoRunner.image.name }}:{{ .Values.forgejoRunner.image.tag }}
+          securityContext:
+            runAsUser: 0
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              RUNNER_TOKEN=$(cat /shared/runner_token)
+              if [ -z "$RUNNER_TOKEN" ]; then
+                echo "ERROR: Runner token is empty! Exiting."
+                exit 1
+              else
+                echo "Runner token successfully retrieved."
+              fi
+
+              echo "Waiting for Docker daemon socket at /var/run/docker.sock..."
+              until [ -S /var/run/docker.sock ]; do
+                sleep 1
+              done
+              echo "Docker daemon socket detected!"
+
+              # Register runner dynamically with the pod's unique $HOSTNAME
+              if [ ! -f /data/.runner ]; then
+                forgejo-runner register \
+                  --no-interactive \
+                  --instance "${FORGEJO_INSTANCE_URL}" \
+                  --token "${RUNNER_TOKEN}" \
+                  --name "${HOSTNAME}" \
+                  --labels "ubuntu-latest:docker://node:20-bookworm,docker:docker://docker:dind"
+              fi
+
+              # Start daemon
+              exec forgejo-runner daemon
+          lifecycle:
+            preStop:
+              exec:
+                command:
+                  - /bin/sh
+                  - -c
+                  - "forgejo-runner unregister --instance ${FORGEJO_INSTANCE_URL} --token $(cat /shared/runner_token) || true"
+          env:
+            - name: FORGEJO_INSTANCE_URL
+              value: "http://{{ include "forgejo.server.serviceName" . }}:3000"
+            - name: DOCKER_HOST
+              value: "unix:///var/run/docker.sock"
+          volumeMounts:
+            - name: shared-token
+              mountPath: /shared
+            - name: dind-sock
+              mountPath: /var/run
+            - name: runner-data
+              mountPath: /data
+          resources:
+            {{- .Values.forgejoRunner.resources | toYaml | nindent 12 }}
+
+        # --- Docker-in-Docker (DinD) Engine ---
+        {{- if .Values.forgejoRunner.dockerInDocker.enabled }}
+        - name: dind
+          image: {{ .Values.forgejoRunner.dockerInDocker.image.name }}:{{ .Values.forgejoRunner.dockerInDocker.image.tag }}
+          securityContext:
+            privileged: true
+          env:
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
+          volumeMounts:
+            - name: dind-sock
+              mountPath: /var/run
+            - name: dind-storage
+              mountPath: /var/lib/docker
+          resources:
+            {{- .Values.forgejoRunner.dockerInDocker.resources | toYaml | nindent 12 }}
+        {{- end }}
+
+      volumes:
+        # Shared token pass-through between initContainer and runner
+        - name: shared-token
+          emptyDir: {}
+        # Shared Unix socket for Docker client/daemon communication
+        - name: dind-sock
+          emptyDir: {}
+        # Ephemeral runner workspace (ensures fresh config on boot)
+        - name: runner-data
+          emptyDir: {}
+        # Ephemeral storage layer for build images/containers
+        - name: dind-storage
+          emptyDir: {}
+{{- end }}
