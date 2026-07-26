@@ -1,7 +1,6 @@
-
 rustFS:
   image:
-    tag: 1.0.0-alpha.90
+    tag: 1.0.0-beta.6
   serverDomains: "example.com"
   obsLogLevel: "debug"
   alloyAddress: "http://alloy-svc.lgtm-stack.svc.cluster.local:4318"
@@ -23,3 +22,17 @@ resources:
   limits:
     memory: "1Gi"
     cpu: "1"
+
+vaultAuthentication:
+  enabled: true
+  clusterSecretStoreName: "secret-store"
+  keyPath: "keyvault/vault.example.com/terraform"
+
+s3Objects:
+  kvNameToStoreSecrets: "k8s-stage"
+
+  buckets:
+    - serviceName: "mimir"
+      bucketName: "mimir-data"
+    - serviceName: "terraform"
+      bucketName: "terraform-state"

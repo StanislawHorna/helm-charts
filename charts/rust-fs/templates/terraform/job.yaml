@@ -1,0 +1,64 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: tf-apply
+  namespace: {{ .Release.Namespace }}
+  labels:
+  annotations:
+    # This is the magic that tells Helm to run this AFTER install and upgrade
+    "helm.sh/hook": post-install,post-upgrade
+    # Deletes the old job before running a new one on upgrade
+    "helm.sh/hook-delete-policy": before-hook-creation
+spec:
+  template:
+    metadata:
+      name: tf-apply
+    spec:
+      restartPolicy: OnFailure
+      containers:
+        - name: terraform
+          image: hashicorp/terraform:1.15.0
+          workingDir: /workspace
+          command:
+            - /bin/sh
+            - -c
+            - |
+              set -e
+              echo "Copying Terraform files to writeable workspace..."
+              rm -rf /workspace/*.tf
+              cp -rL /codespace/* /workspace/
+
+              echo "Starting Terraform Init..."
+              terraform init
+              
+              echo "Starting Terraform Apply..."
+              terraform apply -auto-approve
+          env:
+            - name: TF_DATA_DIR
+              value: "/tfstate"
+            - name: TF_VAR_RESOURCES
+              value: {{ include "rust-fs.s3ObjectsMapJson" . | quote}}
+            - name: TF_VAR_VAULT_KV_NAME
+              value: {{ .Values.s3Objects.kvNameToStoreSecrets }}
+            - name: TF_VAR_VAULT_KV_PREFIX
+              value: "{{ include "rust-fs.appName" . }}"
+            - name: TF_VAR_RUSTFS_INSTANCE
+              value: {{ .Values.rustFS.serverDomains}}
+          envFrom:
+            - secretRef:
+                name: tf-vault-access
+            - secretRef:
+                name: rust-admin-secret
+          volumeMounts:
+            - name: tf-code
+              mountPath: /codespace
+            - name: tf-workspace
+              mountPath: /workspace
+      volumes:
+        - name: tf-code
+          configMap:
+            name: terraform-files
+            defaultMode: 0644
+        - name: tf-workspace
+          persistentVolumeClaim:
+            claimName: terraform-pvc
