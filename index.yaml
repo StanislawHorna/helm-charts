@@ -1,6 +1,38 @@
 apiVersion: v1
 entries:
+  authentik:
+  - apiVersion: v2
+    appVersion: 2.7.5
+    created: "2026-07-27T16:37:13.39469688Z"
+    description: Authentik deployment for Kubernetes
+    digest: 47d98f593220cd7dce2bdc72c8034aac91b998831c4ef51d825cc9f5f7017521
+    name: authentik
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/authentik-0.0.1/authentik-0.0.1.tgz
+    version: 0.0.1
+  external-metrics-scrape:
+  - apiVersion: v2
+    appVersion: 0.0.1
+    created: "2026-07-27T16:37:13.549568926Z"
+    description: A Helm chart for the scraping external metrics with ServiceMonitors.
+    digest: 090c8148520f3254241cb04447ae1baf8ae0a91e5200f54cf97b9841bbc47824
+    name: external-metrics-scrape
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/external-metrics-scrape-0.0.2/external-metrics-scrape-0.0.2.tgz
+    version: 0.0.2
   forgejo:
+  - apiVersion: v2
+    appVersion: 15.0.5
+    created: "2026-07-27T16:37:13.668639253Z"
+    description: Forgejo deployment for Kubernetes
+    digest: bdf0528181e552066c15dc73740bd08d7aa873213dc0cc84de6f4c82ee3b6690
+    name: forgejo
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/forgejo-0.1.0/forgejo-0.1.0.tgz
+    version: 0.1.0
   - apiVersion: v2
     appVersion: 15.0.5
     created: "2026-07-26T17:06:34.589615037Z"
@@ -681,4 +713,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-07-26T17:14:46.693788049Z"
+generated: "2026-07-27T16:37:13.668697392Z"
