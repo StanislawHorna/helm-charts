@@ -77,6 +77,19 @@ forgejoBootstrap:
 database:
   storageClass: local-path-static
   kvPrefix: "postgres"
+  backup:
+    enabled: false
+    schedule: "0 0 * * * *"
+    s3Config:
+      destinationPath: "s3://forgejo-pg-backup/"
+      endpointURL: "http://rust-fs.rust-fs.svc.cluster.local:9000"
+      retentionPolicy: "30d"
+      credentialsInVault:
+        enabled: false
+        path: "rust-fs/s3/forgejo"
+        accessKeyProperty: "access_key"
+        secretKeyProperty: "secret_key"
+        
 
 persistence:
   repositoryFiles:
@@ -84,6 +97,6 @@ persistence:
     accessMode: ReadWriteMany
     size: 50Gi
   configFiles:
-    storageClass: "nfs-storage-static"
+    storageClass: "local-path-static"
     accessMode: ReadWriteOnce
     size: 10Gi
