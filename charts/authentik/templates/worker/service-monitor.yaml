@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: authentik-worker
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "authentik.deployment.worker.labels" . | nindent 4 }}
+spec:
+  endpoints:
+    - port: metrics
+      interval: 15s
+  selector:
+    matchLabels:
+      {{- include "authentik.deployment.worker.labels" . | nindent 6 }}

@@ -1,0 +1,26 @@
+{{- if include "authentik.hasCNPGCluster" . }}
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: {{ include "authentik.db.clusterName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  instances: 1
+  
+  storage:
+    size: 5Gi
+    storageClass: {{ .Values.database.storageClass }}
+  
+  bootstrap:
+    initdb:
+      database: {{ include "authentik.db.databaseName" . }}
+      owner: {{ include "authentik.db.username" . }}
+      secret:
+        name: db-creds
+
+  plugins:
+    - name: barman-cloud.cloudnative-pg.io
+      isWALArchiver: true
+      parameters:
+        barmanObjectName: {{ include "authentik.db.clusterName" . }}-s3-store
+{{- end -}}

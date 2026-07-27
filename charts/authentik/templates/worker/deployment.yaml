@@ -1,0 +1,125 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "authentik.worker.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "authentik.deployment.worker.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "authentik.deployment.worker.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "authentik.deployment.worker.labels" . | nindent 8 }}
+    spec:
+      volumes:
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
+      containers:
+        - name: worker
+          image: ghcr.io/goauthentik/server:{{ .Values.image.tag }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - worker
+          resources:
+            {{- toYaml .Values.worker.resources | nindent 12 }}
+          env:
+            - name: AUTHENTIK_POSTGRESQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: password
+          envFrom:
+            - configMapRef:
+                name: authentik-config
+            - secretRef:
+                name: authentik-bootstrap
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+            - name: metrics
+              containerPort: 9300
+              protocol: TCP
+          volumeMounts:
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}
+        
+        # --- Outpost: Proxy ---
+        - name: authentik-proxy
+          image: ghcr.io/goauthentik/proxy:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: proxy-http
+              containerPort: 9001
+              protocol: TCP
+            - name: proxy-https
+              containerPort: 9444
+              protocol: TCP
+          env:
+            - name: AUTHENTIK_HOST
+              value: "https://authentik.company"
+            - name: AUTHENTIK_INSECURE
+              value: "false"
+            - name: AUTHENTIK_TOKEN
+              value: "token-generated-by-authentik"
+            - name: AUTHENTIK_PORT_HTTP
+              value: "9001"
+            - name: AUTHENTIK_PORT_HTTPS
+              value: "9444"
+
+        # --- Outpost: LDAP ---
+        - name: authentik-ldap
+          image: ghcr.io/goauthentik/ldap:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: ldap
+              containerPort: 3389
+              protocol: TCP
+            - name: ldaps
+              containerPort: 6636
+              protocol: TCP
+          env:
+            - name: AUTHENTIK_HOST
+              value: "https://authentik.company"
+            - name: AUTHENTIK_INSECURE
+              value: "false"
+            - name: AUTHENTIK_TOKEN
+              value: "token-generated-by-authentik"
+
+        # --- Outpost: RAC (Remote Access Controller) ---
+        - name: rac-outpost
+          image: ghcr.io/goauthentik/rac:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: AUTHENTIK_HOST
+              value: "https://authentik.company"
+            - name: AUTHENTIK_INSECURE
+              value: "false"
+            - name: AUTHENTIK_TOKEN
+              value: "token-generated-by-authentik"
+
+        # --- Outpost: Radius ---
+        - name: radius-outpost
+          image: ghcr.io/goauthentik/radius:{{ .Values.image.tag | default "latest" }}
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: radius-udp
+              containerPort: 1812
+              protocol: UDP
+          env:
+            - name: AUTHENTIK_HOST
+              value: "https://authentik.company"
+            - name: AUTHENTIK_INSECURE
+              value: "false"
+            - name: AUTHENTIK_TOKEN
+              value: "token-generated-by-authentik"

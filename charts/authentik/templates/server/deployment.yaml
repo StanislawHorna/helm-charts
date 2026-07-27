@@ -1,0 +1,86 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "authentik.server.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "authentik.deployment.server.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "authentik.deployment.server.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "authentik.deployment.server.labels" . | nindent 8 }}
+    spec:
+      volumes:
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
+      containers:
+        - name: server
+          image: ghcr.io/goauthentik/server:{{ .Values.image.tag }}
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+          resources:
+            {{- toYaml .Values.server.resources | nindent 12 }}
+          env:
+            - name: AUTHENTIK_POSTGRESQL__PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: db-creds
+                  key: password
+          envFrom:
+            - configMapRef:
+                name: authentik-config
+            - secretRef:
+                name: authentik-bootstrap
+          ports:
+            - name: http
+              containerPort: 9000
+              protocol: TCP
+            - name: https
+              containerPort: 9443
+              protocol: TCP
+            - name: metrics
+              containerPort: 9300
+              protocol: TCP
+          volumeMounts:
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}
+          # livenessProbe:
+          #   failureThreshold: 3
+          #   httpGet:
+          #     path: "/-/health/live/"
+          #     port: http
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   timeoutSeconds: 3
+          # readinessProbe:
+          #   failureThreshold: 3
+          #   httpGet:
+          #     path: "/-/health/ready/"
+          #     port: http
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   timeoutSeconds: 3
+          # startupProbe:
+          #   failureThreshold: 60
+          #   httpGet:
+          #     path: "/-/health/live/"
+          #     port: http
+          #   initialDelaySeconds: 5
+          #   periodSeconds: 10
+          #   successThreshold: 1
+          #   timeoutSeconds: 3
+

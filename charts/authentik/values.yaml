@@ -1,0 +1,64 @@
+image:
+  tag: 2026.2.3
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s-dev"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      path: "keyvault/vault.example.com/terraform"
+
+authentikBootstrap:
+  adminEmail: "admin@example.com"
+  kvPrefix: "authentik"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
+gateway:
+  enabled: true
+  allowHttp: false
+  hostname: authentik.example.com
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+
+database:
+  storageClass: local-path-static
+  kvPrefix: "postgres"
+  backup:
+    enabled: false
+    schedule: "0 0 * * * *"
+    s3Config:
+      destinationPath: "s3://authentik-pg-backup/"
+      endpointURL: "http://rust-fs.rust-fs.svc.cluster.local:9000"
+      retentionPolicy: "30d"
+      credentialsInVault:
+        enabled: false
+        path: "rust-fs/s3/authentik"
+        accessKeyProperty: "access_key"
+        secretKeyProperty: "secret_key"
+
+server:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "2Gi"
+      cpu: "2"
+worker:
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "2Gi"
+      cpu: "2"

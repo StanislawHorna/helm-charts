@@ -1,0 +1,22 @@
+{{- if include "authentik.hasCNPGCluster" . }}
+apiVersion: barmancloud.cnpg.io/v1
+kind: ObjectStore
+metadata:
+  name: {{ include "authentik.db.clusterName" . }}-s3-store
+  namespace: {{ .Release.Namespace }}
+spec:
+  retentionPolicy: "{{ .Values.database.backup.s3Config.retentionPolicy }}"
+  configuration:
+    destinationPath: "{{ .Values.database.backup.s3Config.destinationPath }}"
+    endpointURL: "{{ .Values.database.backup.s3Config.endpointURL }}"
+    s3Credentials:
+      accessKeyId:
+        name: cnpg-backup-s3-credentials
+        key: {{ .Values.database.backup.s3Config.credentialsInVault.accessKeyProperty }}
+      secretAccessKey:
+        name: cnpg-backup-s3-credentials
+        key: {{ .Values.database.backup.s3Config.credentialsInVault.secretKeyProperty }}
+    wal:
+      compression: gzip
+      maxParallel: 2
+{{- end -}}
