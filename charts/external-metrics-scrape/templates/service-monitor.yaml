@@ -18,5 +18,8 @@ spec:
       interval: {{ .scrape_interval }}
       path: {{ .path }}
       scheme: {{ .scheme }}
+      relabelings:
+      - targetLabel: instance
+        replacement: {{ .name }}
 {{- end }}
 {{- end }}
