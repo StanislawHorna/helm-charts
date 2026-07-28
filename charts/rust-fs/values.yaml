@@ -14,6 +14,12 @@ rustFS:
   storage:
     size: 200Gi
     storageClass: nfs-storage-static
+    
+  generateAuthentikOAuthSecrets:
+    enabled: true
+    authentikHost: "https://authentik.example.com"
+    kvPrefix: "authentik"
+
 
 resources:
   requests:
@@ -27,6 +33,13 @@ vaultAuthentication:
   enabled: true
   clusterSecretStoreName: "secret-store"
   keyPath: "keyvault/vault.example.com/terraform"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
 
 s3Objects:
   kvNameToStoreSecrets: "k8s-stage"

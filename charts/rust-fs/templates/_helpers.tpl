@@ -53,3 +53,27 @@ TF_VAR_MINIO_PASSWORD
     - name: {{ include "rust-fs.admin.credentials.secret_key" . }}
       value_length: 16
 {{- end -}}
+
+{{- define "rust-fs.authentikOAuthSecrets.key_name" -}}
+rust-fs-oauth
+{{- end -}}
+{{- define "rust-fs.authentikOAuthSecrets" -}}
+- key_name_prefix: {{ .Values.rustFS.generateAuthentikOAuthSecrets.kvPrefix }}
+  key_name: {{ include "rust-fs.authentikOAuthSecrets.key_name" . }}
+  service_hostname: {{ .Values.rustFS.generateAuthentikOAuthSecrets.authentikHost | trimPrefix "https://" | trimPrefix "http://" }}
+  properties:
+    - name: RUSTFS_IDENTITY_OPENID_ENABLE
+      value: "true"
+    - name: RUSTFS_IDENTITY_OPENID_DISPLAY_NAME
+      value: "Authentik"
+    - name: RUSTFS_IDENTITY_OPENID_CLIENT_ID
+      value: "rustfs"
+    - name: RUSTFS_IDENTITY_OPENID_CLIENT_SECRET
+      value_length: 32
+    - name: RUSTFS_IDENTITY_OPENID_CLAIM_NAME
+      value: "policy"
+    - name: RUSTFS_IDENTITY_OPENID_CONFIG_URL
+      value: "{{ .Values.rustFS.generateAuthentikOAuthSecrets.authentikHost }}/application/o/rustfs/.well-known/openid-configuration"
+    - name: RUSTFS_IDENTITY_OPENID_SCOPES
+      value: "openid profile email entitlements groups"
+{{- end -}}
