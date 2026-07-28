@@ -34,6 +34,11 @@ spec:
           configMap:
             name: grafana-dashboards
       {{- end }}
+      {{- if .Values.grafana.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+      {{- end }}
       containers:
         - name: grafana
           image: "grafana/grafana:{{ .Values.grafana.image.tag }}"
@@ -44,6 +49,18 @@ spec:
               containerPort: 3000
           resources:
             {{- toYaml .Values.grafana.resources | nindent 12 }}
+          env:
+            - name: SSL_CERT_FILE
+              value: /etc/ssl/certs/root-ca.crt
+          envFrom:
+          {{- if .Values.grafana.generateAuthentikOAuthSecrets.enabled }}
+            - secretRef:
+                name: grafana-oauth-secrets
+          {{- end }}
+          {{- if .Values.grafana.defaultAdminCredentials.enabled }}
+            - secretRef:
+                name: grafana-admin-creds
+          {{- end }}
           volumeMounts:
             - name: grafana-storage
               mountPath: /var/lib/grafana
@@ -56,4 +73,9 @@ spec:
               mountPath: /etc/grafana/provisioning/dashboards
             - name: grafana-dashboards
               mountPath: /var/lib/grafana/dashboards
+          {{- end }}
+          {{- if .Values.grafana.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
           {{- end }}

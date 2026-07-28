@@ -2,7 +2,7 @@
 Expand the name of the chart.
 */}}
 {{- define "lgtm-stack.name" -}}
-{{- default .Chart.Name .Values.nameOverride | trunc 63 | trimSuffix "-" -}}
+{{- default .Chart.Name | trunc 63 | trimSuffix "-" -}}
 {{- end -}}
 
 {{/*
@@ -147,3 +147,49 @@ Usage: {{ include "lgtm-stack.memcachedContainer" .Values.loki.cacheResources }}
   ports:
     - containerPort: 11211
 {{- end -}}
+
+{{- define "lgtm-stack.grafana.defaultAdminCredentials.key_name_prefix" -}}
+grafana
+{{- end -}}
+{{- define "lgtm-stack.grafana.defaultAdminCredentials.key_name" -}}
+grafana-admin-credentials
+{{- end -}}
+
+{{- define "lgtm-stack.grafana.defaultAdminCredentials" -}}
+- key_name_prefix: {{ include "lgtm-stack.grafana.defaultAdminCredentials.key_name_prefix" . }}
+  key_name: {{ include "lgtm-stack.grafana.defaultAdminCredentials.key_name" . }}
+  service_hostname: {{ .Values.grafana.rootUrl | trimPrefix "https://" | trimPrefix "http://" }}
+  properties:
+    - name: GF_SECURITY_ADMIN_USER
+      value: {{ .Values.grafana.defaultAdminCredentials.username | default "admin" }}
+      value_length: 5
+    - name: GF_SECURITY_ADMIN_PASSWORD
+      value_length: 32
+{{- end -}}
+
+{{-  define "lgtm-stack.grafana.authentikOAuthSecrets.key_name" -}}
+grafana-oauth
+{{- end -}}
+
+{{- define "lgtm-stack.grafana.authentikOAuthSecrets" -}}
+- key_name_prefix: {{ .Values.grafana.generateAuthentikOAuthSecrets.kvPrefix }}
+  key_name: {{ include "lgtm-stack.grafana.authentikOAuthSecrets.key_name" . }}
+  service_hostname: {{ .Values.grafana.generateAuthentikOAuthSecrets.authentikHost | trimPrefix "https://" | trimPrefix "http://" }}
+  properties:
+    - name: GF_AUTH_GENERIC_OAUTH_ENABLED
+      value: "true"
+    - name: GF_AUTH_GENERIC_OAUTH_CLIENT_ID
+      value: "grafana"
+      value_length: 4
+    - name: GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET
+      value_length: 32
+    - name: GF_AUTH_GENERIC_OAUTH_AUTH_URL
+      value: "{{ .Values.grafana.generateAuthentikOAuthSecrets.authentikHost }}/application/o/authorize/"
+    - name: GF_AUTH_GENERIC_OAUTH_TOKEN_URL
+      value: "{{ .Values.grafana.generateAuthentikOAuthSecrets.authentikHost }}/application/o/token/"
+    - name: GF_AUTH_GENERIC_OAUTH_API_URL
+      value: "{{ .Values.grafana.generateAuthentikOAuthSecrets.authentikHost }}/userinfo/"
+    - name: GF_AUTH_GENERIC_OAUTH_SCOPES
+      value: "openid profile email entitlements groups"
+{{- end -}}
+
