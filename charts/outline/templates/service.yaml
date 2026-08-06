@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "outline.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "outline.labels" . | nindent 4 }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ include "outline.server.http.port" . }}
+      targetPort: {{ include "outline.server.http.port" . }}
+  selector:
+    {{- include "outline.labels" . | nindent 4 }}
+    

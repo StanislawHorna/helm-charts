@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "outline.cache.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "outline.cache.appName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - port: 6379
+      targetPort: redis
+      protocol: TCP
+      name: redis
+  selector:
+    app: {{ include "outline.cache.appName" . }}

@@ -1,0 +1,72 @@
+outline:
+  image:
+    name: outlinewiki/outline
+    tag: 1.9.2
+  rootURL: "https://outline.example.com"
+  appSecret:
+    kvPrefix: "outline"
+  generateAuthentikOAuthSecrets:
+    enabled: true
+    authentikHost: "https://authentik.example.com"
+    kvPrefix: "authentik"
+redisCache:
+  image:
+    tag: 7-alpine
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s-dev"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
+gateway:
+  enabled: true
+  allowHttp: false
+  hostname: outline.example.com
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+
+database:
+  storageClass: local-path-static
+  kvPrefix: "postgres"
+  backup:
+    enabled: false
+    schedule: "0 0 * * * *"
+    s3Config:
+      destinationPath: "s3://outline-pg-backup/"
+      endpointURL: "http://rust-fs.rust-fs.svc.cluster.local:9000"
+      retentionPolicy: "30d"
+      credentialsInVault:
+        enabled: false
+        path: "rust-fs/s3/outline"
+        accessKeyProperty: "access_key"
+
+storage:
+  s3Config:
+    enabled: true
+    endpointURL: "http://rust-fs.rust-fs.svc.cluster.local:9000"
+    bucketName: "outline-data"
+    ClusterSecretStoreName: "secret-store"
+    kvName: "rust-fs/s3/outline"
+    accessKey: "access_key"
+    secretKey: "secret_key"

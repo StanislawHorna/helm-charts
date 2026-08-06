@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "outline.appName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "outline.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "outline.labels" . | nindent 8 }}
+    spec:
+      volumes:
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
+      containers:
+        - name: outline
+          image: "{{ .Values.outline.image.name }}:{{ .Values.outline.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: URL
+              value: {{ .Values.outline.rootURL }}
+            - name: REDIS_URL
+              value: "redis://{{ include "outline.cache.hostname" . }}:6379"
+            - name: REDIS_COLLABORATION_URL
+              value: "redis://{{ include "outline.cache.hostname" . }}:6379"
+            - name: NODE_EXTRA_CA_CERTS
+              value: "/etc/ssl/certs/root-ca.crt"
+            - name: FILE_STORAGE
+              value: "s3"
+            - name: AWS_REGION
+              value: "us-east-1"
+            - name: AWS_S3_FORCE_PATH_STYLE
+              value: "true"
+            - name: AWS_S3_UPLOAD_BUCKET_NAME
+              value: "{{ .Values.storage.s3Config.bucketName }}"
+            - name: AWS_S3_UPLOAD_BUCKET_URL
+              value: "{{ .Values.storage.s3Config.endpointURL }}"
+            - name: AWS_S3_ACL
+              value: "private"
+            - name: AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: s3-data-credentials
+                  key: "{{ .Values.storage.s3Config.accessKey }}"
+            - name: AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: s3-data-credentials
+                  key: "{{ .Values.storage.s3Config.secretKey }}"
+          envFrom:
+            - secretRef:
+                name: {{ include "outline.appSecret.key_name" . }}
+            - secretRef:
+                name: outline-oauth
+            - secretRef:
+                name: db-url
+          ports:
+            - containerPort: {{ include "outline.server.http.port" . }}
+          volumeMounts:
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "outline.cache.appName" . }}
+  labels:
+    app: {{ include "outline.cache.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "outline.cache.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "outline.cache.appName" . }}
+    spec:
+      containers:
+        - name: redis
+          image: "redis:{{ .Values.redisCache.image.tag }}"
+          resources:
+            {{- toYaml .Values.redisCache.resources | nindent 12 }}
+            
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          # Liveness and Readiness probes using native redis-cli
+          livenessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 10
+            periodSeconds: 20
+          readinessProbe:
+            exec:
+              command:
+                - redis-cli
+                - ping
+            initialDelaySeconds: 5
+            periodSeconds: 10
+
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+      volumes:
+        - name: redis-data
+          emptyDir: {}
