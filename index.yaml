@@ -628,6 +628,16 @@ entries:
   outline:
   - apiVersion: v2
     appVersion: 1.9.2
+    created: "2026-08-08T18:47:10.667195474Z"
+    description: A Helm chart for the Outline wiki application.
+    digest: ae831ef33cdf2632b6f826e76551a2a8b8b21c4ef1a34e61b090a17d51f71fd3
+    name: outline
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/outline-0.0.2/outline-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 1.9.2
     created: "2026-08-08T18:14:36.85760042Z"
     description: A Helm chart for the Outline wiki application.
     digest: 67ca5b697d61f10f10deb73d6ab3180e426b2145c9a186659521ab374cbc50f8
@@ -794,6 +804,16 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/traefik-api-gateway-0.0.1/traefik-api-gateway-0.0.1.tgz
     version: 0.0.1
+  trek:
+  - apiVersion: v2
+    appVersion: 3.4.1
+    created: "2026-08-08T18:47:10.781641205Z"
+    description: A Helm chart for the trek application.
+    digest: fd2c0d1645bacba67eca8d6337469b33718495962bcad664774494bb0add6b4d
+    name: trek
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/trek-0.0.1/trek-0.0.1.tgz
+    version: 0.0.1
   vault-integration:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -810,4 +830,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-08T18:25:53.16549373Z"
+generated: "2026-08-08T18:47:10.781723409Z"
