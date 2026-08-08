@@ -1,0 +1,42 @@
+{{- if .Values.forgejoRunner.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "forgejo.runner.appName" . }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  config.yaml: |
+    log:
+      level: info
+    runner:
+      capacity: 1
+      envs:
+        BUILDKITD_CONFIG: "/etc/buildkit/buildkitd.toml"
+      timeout: 3h
+      insecure: false
+      fetch_timeout: 5s
+      fetch_interval: 2s
+    container:
+      network: ""
+      enable_ipv6: false
+      privileged: true
+      options: "-v /var/run/docker.sock:/var/run/docker.sock -v /etc/docker/certs.d/{{ .Values.gateway.hostname }}:/etc/docker/certs.d/{{ .Values.gateway.hostname }}:ro -v /etc/buildkit/buildkitd.toml:/etc/buildkit/buildkitd.toml:ro"
+      valid_volumes:
+        - "/var/run/docker.sock"
+        - "/etc/docker/certs.d/{{ .Values.gateway.hostname }}"
+        - "/etc/buildkit/buildkitd.toml"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+        - "/etc/docker/certs.d/{{ .Values.gateway.hostname }}:/etc/docker/certs.d/{{ .Values.gateway.hostname }}:ro"
+        - "/etc/buildkit/buildkitd.toml:/etc/buildkit/buildkitd.toml:ro"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "forgejo.runner.appName" . }}-buildkit-config
+  namespace: {{ .Release.Namespace }}
+data:
+  buildkitd.toml: |
+    [registry."{{ .Values.gateway.hostname }}"]
+      ca = ["/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"]
+{{- end }}

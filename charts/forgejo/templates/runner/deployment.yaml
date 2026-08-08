@@ -1,5 +1,4 @@
 {{- if .Values.forgejoRunner.enabled }}
-
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -26,8 +25,6 @@ spec:
             - |
               set -e
               echo "Fetching runner registration token from Forgejo API..."
-              
-              # Wait for Forgejo API to respond and fetch token
               until RESPONSE=$(curl -s -f -X GET "${FORGEJO_INSTANCE_URL}/api/v1/admin/runners/registration-token" \
                 -H "Authorization: token ${ADMIN_PAT}" \
                 -H "Accept: application/json"); do
@@ -35,7 +32,6 @@ spec:
                 sleep 3
               done
 
-              # Extract token value from JSON response
               RUNNER_TOKEN=$(echo "$RESPONSE" | grep -o '"token":"[^"]*' | cut -d'"' -f4)
 
               if [ -z "$RUNNER_TOKEN" ]; then
@@ -72,28 +68,26 @@ spec:
               if [ -z "$RUNNER_TOKEN" ]; then
                 echo "ERROR: Runner token is empty! Exiting."
                 exit 1
-              else
-                echo "Runner token successfully retrieved."
               fi
 
               echo "Waiting for Docker daemon socket at /var/run/docker.sock..."
               until [ -S /var/run/docker.sock ]; do
                 sleep 1
               done
-              echo "Docker daemon socket detected!"
 
-              # Register runner dynamically with the pod's unique $HOSTNAME
+              cp /etc/runner/config.yaml /data/config.yaml
+
               if [ ! -f /data/.runner ]; then
                 forgejo-runner register \
+                  --config /data/config.yaml \
                   --no-interactive \
                   --instance "${FORGEJO_INSTANCE_URL}" \
                   --token "${RUNNER_TOKEN}" \
                   --name "${HOSTNAME}" \
-                  --labels "ubuntu-latest:docker://node:20-bookworm,docker:docker://docker:dind"
+                  --labels "ubuntu-latest:docker://catthehacker/ubuntu:act-latest,docker:docker://catthehacker/ubuntu:act-latest"
               fi
 
-              # Start daemon
-              exec forgejo-runner daemon
+              exec forgejo-runner daemon --config /data/config.yaml
           lifecycle:
             preStop:
               exec:
@@ -106,6 +100,8 @@ spec:
               value: "http://{{ include "forgejo.server.serviceName" . }}:3000"
             - name: DOCKER_HOST
               value: "unix:///var/run/docker.sock"
+            - name: DOCKER_TLS_CERTDIR
+              value: ""
           volumeMounts:
             - name: shared-token
               mountPath: /shared
@@ -113,15 +109,56 @@ spec:
               mountPath: /var/run
             - name: runner-data
               mountPath: /data
+            - name: runner-config
+              mountPath: /etc/runner
+            # --- MOUNTED TO RUNNER POD FOR CONTAINER BIND-MOUNTS ---
+            - name: ca-volume
+              mountPath: /etc/docker/certs.d/{{ .Values.gateway.hostname }}
+            - name: buildkit-config
+              mountPath: /etc/buildkit
           resources:
             {{- .Values.forgejoRunner.resources | toYaml | nindent 12 }}
 
         # --- Docker-in-Docker (DinD) Engine ---
-        {{- if .Values.forgejoRunner.dockerInDocker.enabled }}
+{{- if .Values.forgejoRunner.dockerInDocker.enabled }}
         - name: dind
           image: {{ .Values.forgejoRunner.dockerInDocker.image.name }}:{{ .Values.forgejoRunner.dockerInDocker.image.tag }}
           securityContext:
             privileged: true
+          command:
+            - /bin/sh
+            - -c
+            - |
+              # Background daemon to inject Root CA into all started containers automatically
+              (
+                echo "Starting automatic CA injector..."
+                until docker info >/dev/null 2>&1; do sleep 1; done
+
+                CA_PATH="/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"
+
+                if [ -f "$CA_PATH" ]; then
+                  echo "CA injector active for target: $CA_PATH"
+                  docker events --filter 'event=start' --format '{{ `{{.ID}}` }}' | while read -r CID; do
+                    (
+                      # Get container's live overlay rootfs path using Helm raw string literals
+                      MERGED_DIR=$(docker inspect --format '{{ `{{if .GraphDriver.Data.MergedDir}}{{.GraphDriver.Data.MergedDir}}{{end}}` }}' "$CID" 2>/dev/null)
+                      if [ -n "$MERGED_DIR" ] && [ -f "$MERGED_DIR/etc/ssl/certs/ca-certificates.crt" ]; then
+                        # Prevent duplicate injection
+                        if ! grep -q "SELF-SIGNED-ROOT-CA-INJECTED" "$MERGED_DIR/etc/ssl/certs/ca-certificates.crt" 2>/dev/null; then
+                          echo "# SELF-SIGNED-ROOT-CA-INJECTED" >> "$MERGED_DIR/etc/ssl/certs/ca-certificates.crt"
+                          cat "$CA_PATH" >> "$MERGED_DIR/etc/ssl/certs/ca-certificates.crt"
+                          echo "Successfully injected Root CA into container: $CID"
+                        fi
+                      fi
+                    ) &
+                  done
+                else
+                  echo "WARNING: CA file not found at $CA_PATH"
+                fi
+              ) &
+
+              # Launch standard DinD entrypoint
+              exec dockerd-entrypoint.sh
           env:
             - name: DOCKER_TLS_CERTDIR
               value: ""
@@ -130,21 +167,31 @@ spec:
               mountPath: /var/run
             - name: dind-storage
               mountPath: /var/lib/docker
+            - name: ca-volume
+              mountPath: /etc/docker/certs.d/{{ .Values.gateway.hostname }}
           resources:
             {{- .Values.forgejoRunner.dockerInDocker.resources | toYaml | nindent 12 }}
         {{- end }}
 
       volumes:
-        # Shared token pass-through between initContainer and runner
         - name: shared-token
           emptyDir: {}
-        # Shared Unix socket for Docker client/daemon communication
         - name: dind-sock
           emptyDir: {}
-        # Ephemeral runner workspace (ensures fresh config on boot)
         - name: runner-data
           emptyDir: {}
-        # Ephemeral storage layer for build images/containers
         - name: dind-storage
           emptyDir: {}
+        - name: runner-config
+          configMap:
+            name: {{ include "forgejo.runner.appName" . }}-config
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+            items:
+              - key: root-ca.crt
+                path: ca.crt
+        - name: buildkit-config
+          configMap:
+            name: {{ include "forgejo.runner.appName" . }}-buildkit-config
 {{- end }}
