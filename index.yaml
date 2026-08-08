@@ -587,6 +587,17 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/omada-exporter-0.0.1/omada-exporter-0.0.1.tgz
     version: 0.0.1
+  outline:
+  - apiVersion: v2
+    appVersion: 1.9.2
+    created: "2026-08-08T18:14:36.85760042Z"
+    description: A Helm chart for the Outline wiki application.
+    digest: 67ca5b697d61f10f10deb73d6ab3180e426b2145c9a186659521ab374cbc50f8
+    name: outline
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/outline-0.0.1/outline-0.0.1.tgz
+    version: 0.0.1
   pve-exporter:
   - apiVersion: v2
     appVersion: 3.5.5
@@ -751,4 +762,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-07-28T19:45:36.950893606Z"
+generated: "2026-08-08T18:14:36.857851325Z"
