@@ -1,0 +1,22 @@
+{{- if and .Values.rustFS.gateway.enabled .Values.rustFS.gateway.cors.enabled .Values.rustFS.gateway.cors.allowedOrigins }}
+apiVersion: traefik.io/v1alpha1
+kind: Middleware
+metadata:
+  name: {{ include "rust-fs.serviceName" . }}-cors
+  namespace: {{ .Release.Namespace }}
+spec:
+  headers:
+    accessControlAllowMethods:
+      - "GET"
+      - "PUT"
+      - "POST"
+      - "DELETE"
+      - "HEAD"
+      - "OPTIONS"
+    accessControlAllowHeaders:
+      - "*"
+    accessControlAllowOriginList:
+      {{- toYaml .Values.rustFS.gateway.cors.allowedOrigins | nindent 6 }}
+    accessControlMaxAge: 3600
+    addVaryHeader: true
+{{- end }}

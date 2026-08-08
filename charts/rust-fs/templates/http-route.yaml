@@ -46,6 +46,14 @@ spec:
         - path:
             type: PathPrefix
             value: /
+      {{- if and .Values.rustFS.gateway.cors.enabled .Values.rustFS.gateway.cors.allowedOrigins }}
+      filters:
+        - type: ExtensionRef
+          extensionRef:
+            group: traefik.io
+            kind: Middleware
+            name: {{ include "rust-fs.serviceName" . }}-cors
+      {{- end }}
       backendRefs:
         - name: {{ include "rust-fs.serviceName" . }}
           port: 9000
