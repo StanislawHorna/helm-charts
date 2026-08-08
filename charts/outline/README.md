@@ -51,7 +51,6 @@ A Helm chart for deploying Outline, a fast, collaborative wiki and knowledge bas
     - `http-route.yaml`: HTTPRoute resources for Gateway API ingress.
     - `service.yaml`: Service definition mapping Outline web port.
   - `values.yaml`: Main configuration settings.
-  - `dev-values.yaml`: Pre-configured settings for local development.
 
 ## Configuration
 

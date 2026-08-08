@@ -1,0 +1,52 @@
+{{ if .Values.trek.gateway.enabled }}
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "trek.appName" .}}-server-http-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.trek.gateway.gatewayName}}
+      namespace: {{ .Values.trek.gateway.gatewayNamespace }}
+      sectionName: web
+  hostnames:
+    - {{ .Values.trek.rootUrl | replace "https://" "" | replace "http://" ""  }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      {{- if .Values.trek.gateway.allowHttp }}
+      backendRefs:
+        - name: {{ include "trek.serviceName" . }}
+          port: {{ include "trek.http.port" . }}
+      {{- else }}
+      filters:
+        - type: RequestRedirect
+          requestRedirect:
+            scheme: https
+            port: 443
+            statusCode: 301
+      {{- end }}
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ include "trek.appName" .}}-server-https-route
+  namespace: {{ .Release.Namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.trek.gateway.gatewayName }}
+      namespace: {{ .Values.trek.gateway.gatewayNamespace }}
+      sectionName: websecure
+  hostnames:
+    - {{ .Values.trek.rootUrl | replace "https://" "" | replace "http://" ""  }}
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /
+      backendRefs:
+        - name: {{ include "trek.serviceName" . }}
+          port: {{ include "trek.http.port" . }}
+{{ end }}

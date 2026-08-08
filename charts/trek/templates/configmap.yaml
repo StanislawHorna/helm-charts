@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "trek.appName" . }}-config
+  namespace: {{ .Release.Namespace }}
+data:
+  APP_URL: {{ .Values.trek.rootUrl | quote }}
+  NODE_ENV: {{ .Values.trek.environment | quote }}
+  PORT: "{{ include "trek.http.port" . }}"
+  ALLOW_INTERNAL_NETWORK: "true"
+  TZ: "Europe/Warsaw"
+  LOG_LEVEL: "info"
+  ALLOWED_ORIGINS: {{ .Values.trek.rootUrl | quote }}
+  TRUST_PROXY: "1"

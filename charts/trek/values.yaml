@@ -1,0 +1,60 @@
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s-dev"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+trek:
+  rootUrl: "https://trek.example.com"
+  environment: production
+  image:
+    repository: mauriceboe/trek
+    tag: 3.4.1
+    pullPolicy: IfNotPresent
+  adminBootstrap:
+    enabled: true
+    kvPrefix: "trek"
+    email: admin@example.com
+
+  generateAuthentikOAuthSecrets:
+    enabled: true
+    authentikHost: "https://authentik.example.com"
+    kvPrefix: "authentik"
+  gateway:
+    enabled: true
+    gatewayName: traefik-gateway
+    gatewayNamespace: traefik
+    allowHttp: false
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
+persistence:
+  enabled: true
+  data:
+    size: 10Gi
+    storageClassName: "local-path-static"
+  uploads:
+    size: 10Gi
+    storageClassName: "local-path-static"
+  backups:
+    size: 30Gi
+    storageClassName: "nfs-storage-static"
+
+
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi

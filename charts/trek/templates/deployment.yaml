@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "trek.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "trek.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{- include "trek.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "trek.labels" . | nindent 8 }}
+    spec:
+      securityContext:
+        fsGroup: 1000
+      containers:
+        - name: trek
+          image: "{{ .Values.trek.image.repository }}:{{ .Values.trek.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.trek.image.pullPolicy }}
+          ports:
+            - containerPort: {{ include "trek.http.port" . }}
+          env:
+            - name: NODE_EXTRA_CA_CERTS
+              value: "/etc/ssl/certs/root-ca.crt"
+          envFrom:
+            - configMapRef:
+                name: {{ include "trek.appName" . }}-config
+            - secretRef:
+                name: {{ include "trek.appName" . }}-admin-creds
+            - secretRef:
+                name: {{ include "trek.appName" . }}-oauth
+          volumeMounts:
+            - name: data
+              mountPath: /app/data
+            - name: uploads
+              mountPath: /app/uploads
+            - name: backups
+              mountPath: /app/data/backups
+          {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}
+          livenessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ include "trek.http.port" . }}
+            initialDelaySeconds: 15
+            periodSeconds: 30
+          readinessProbe:
+            httpGet:
+              path: /api/health
+              port: {{ include "trek.http.port" . }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          resources:
+            {{- .Values.resources | toYaml | nindent 12 }}
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "trek.appName" . }}-data
+        - name: uploads
+          persistentVolumeClaim:
+            claimName: {{ include "trek.appName" . }}-uploads
+        - name: backups
+          persistentVolumeClaim:
+            claimName: {{ include "trek.appName" . }}-backups
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
