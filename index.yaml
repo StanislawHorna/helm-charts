@@ -648,6 +648,16 @@ entries:
   outline:
   - apiVersion: v2
     appVersion: 1.9.2
+    created: "2026-08-13T18:41:52.417261677Z"
+    description: A Helm chart for the Outline wiki application.
+    digest: 0c547faa727544f64e02fc8d225b04625141dcdc3f5a86ab08661d538123db12
+    name: outline
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/outline-0.0.3/outline-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 1.9.2
     created: "2026-08-08T18:47:10.667195474Z"
     description: A Helm chart for the Outline wiki application.
     digest: ae831ef33cdf2632b6f826e76551a2a8b8b21c4ef1a34e61b090a17d51f71fd3
@@ -860,4 +870,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-13T17:57:11.551301105Z"
+generated: "2026-08-13T18:41:52.417354821Z"
