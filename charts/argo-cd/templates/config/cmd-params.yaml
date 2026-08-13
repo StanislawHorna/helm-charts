@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cmd-params-cm
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+    app.kubernetes.io/name: argocd-cmd-params-cm
+data:
+  server.insecure: "true"
+  redis.server: "argocd-redis:6379"
+  repo.server: "argocd-repo-server:8081"
+  {{- if .Values.controller.statusProcessors }}
+  controller.status.processors: {{ .Values.controller.statusProcessors | quote }}
+  {{- end }}
+  {{- if .Values.controller.operationProcessors }}
+  controller.operation.processors: {{ .Values.controller.operationProcessors | quote }}
+  {{- end }}

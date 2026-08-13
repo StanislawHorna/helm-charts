@@ -1,0 +1,119 @@
+argoCd:
+  inClusterName: prod-cluster
+  cdRepo: 
+    url: 'https://forgejo.example.com/<org>/<repo>.git'
+    repoAuth:
+      clusterSecretStoreName: "hcp-vault-secret-store"
+      kvName: "k8s/forgejo/forgejo.example.com/SA"
+    targetRevision: HEAD
+    path: bootstrap
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true        
+      - RespectIgnoreDifferences=true
+      - ApplyOutOfSyncOnly=true
+  clusters:
+    - name: stage-cluster
+      clusterSecretStore: "hcp-vault-secret-store"
+      secretKey: k8s/clusters/stage
+    - name: prod-cluster
+      clusterSecretStore: "hcp-vault-secret-store"
+      secretKey: k8s/clusters/prod
+
+images:
+  argocd:
+    repository: quay.io/argoproj/argocd
+    tag: v3.5.0
+    pullPolicy: IfNotPresent
+  redis:
+    repository: redis
+    tag: 7-alpine
+    pullPolicy: IfNotPresent
+
+server:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 500m
+      memory: 512Mi
+    requests:
+      cpu: 100m
+      memory: 128Mi
+
+controller:
+  replicaCount: 1
+  statusProcessors: 20
+  operationProcessors: 10
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+repoServer:
+  replicaCount: 1
+  resources:
+    limits:
+      cpu: 1
+      memory: 1Gi
+    requests:
+      cpu: 250m
+      memory: 256Mi
+
+applicationset:
+  replicaCount: 1
+  resources:
+    requests:
+      cpu: 50m
+      memory: 64Mi
+    limits:
+      cpu: 200m
+      memory: 256Mi
+      
+redis:
+  enabled: true
+  service:
+    port: 6379
+  resources:
+    limits:
+      cpu: 500m
+      memory: 256Mi
+    requests:
+      cpu: 100m
+      memory: 64Mi
+
+gateway:
+  enabled: true
+  allowHttp: false
+  hostname: argocd.example.com
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s-dev"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+
+generateAuthentikOAuthSecrets:
+  enabled: true
+  authentikHost: "https://authentik.example.com"
+  kvPrefix: "authentik"
+
+bootstrap:
+  enabled: true
+  kvPrefix: "argocd"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"

@@ -1,0 +1,33 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-cm
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+    app.kubernetes.io/name: argocd-cm
+data:
+  url: https://{{ .Values.gateway.hostname }}
+  oidc.config: |
+    name: "Authentik"
+    issuer: {{ include "argocd.authentikIssuer" . }}
+    clientID: $oidc.clientID
+    clientSecret: $oidc.clientSecret
+    requestedScopes: ["openid", "profile", "email", "entitlements", "groups"]
+  
+  # # Ignores default field mutations added by External Secrets Operator
+  # resource.customizations.ignoreDifferences.external-secrets.io_ExternalSecret: |
+  #   jqPathExpressions:
+  #     - .spec.data[].remoteRef.conversionStrategy
+  #     - .spec.data[].remoteRef.decodingStrategy
+  #     - .spec.data[].remoteRef.metadataPolicy
+
+  # # Ignores default 'action: replace' injected by Prometheus Operator
+  # resource.customizations.ignoreDifferences.monitoring.coreos.com_ServiceMonitor: |
+  #   jqPathExpressions:
+  #     - .spec.endpoints[].relabelings[].action
+  #     - .spec.endpoints[].metricRelabelings[].action
+
+  # # Ignores default empty conditions injected by endpoint-slice-controller
+  # resource.customizations.ignoreDifferences.discovery.k8s.io_EndpointSlice: |
+  #   jqPathExpressions:
+  #     - .endpoints[].conditions

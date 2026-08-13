@@ -1,0 +1,16 @@
+
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: argocd-rbac-cm
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+data:
+  # Default role for authenticated users who aren't explicitly mapped
+  policy.default: role:readonly
+
+  # Policy CSV mapping IdP groups to Argo CD roles
+  policy.csv: |
+    # Grant admin access to members of the "argo-admin" IdP group
+    g, argo-admin, role:admin

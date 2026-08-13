@@ -1,0 +1,32 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: repo-cd
+  namespace: {{ .Release.Namespace }}
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: {{ .Values.argoCd.cdRepo.repoAuth.clusterSecretStoreName }}
+    kind: ClusterSecretStore
+  target:
+    name: repo-cd
+    template:
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: repository
+      engineVersion: v2
+      data:
+        type: git
+        url: {{ .Values.argoCd.cdRepo.url }}
+        username: "{{ .username }}"
+        password: "{{ .password }}"
+        insecure: "true"
+  data:
+    - secretKey: username
+      remoteRef:
+        key: {{ .Values.argoCd.cdRepo.repoAuth.kvName }}
+        property: username
+    - secretKey: password
+      remoteRef:
+        key: {{ .Values.argoCd.cdRepo.repoAuth.kvName }}  
+        property: password

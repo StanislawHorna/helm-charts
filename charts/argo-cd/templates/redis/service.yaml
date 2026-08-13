@@ -1,0 +1,16 @@
+{{- if .Values.redis.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: argocd-redis
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+    app.kubernetes.io/name: argocd-redis
+spec:
+  ports:
+    - port: {{ .Values.redis.service.port }}
+      targetPort: 6379
+      name: redis
+  selector:
+    app.kubernetes.io/name: argocd-redis
+{{- end }}

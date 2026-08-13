@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: argocd-applicationset-controller
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "argocd.labels" . | nindent 4 }}
+    app.kubernetes.io/name: argocd-applicationset-controller
+spec:
+  replicas: {{ .Values.applicationset.replicaCount | default 1 }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: argocd-applicationset-controller
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: argocd-applicationset-controller
+    spec:
+      serviceAccountName: argocd-applicationset-controller
+      containers:
+        - name: argocd-applicationset-controller
+          image: "{{ .Values.images.argocd.repository }}:{{ .Values.images.argocd.tag }}"
+          imagePullPolicy: {{ .Values.images.argocd.pullPolicy }}
+          command:
+            - argocd-applicationset-controller
+          args:
+            - --argocd-repo-server
+            - argocd-repo-server:8081
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          envFrom:
+            - configMapRef:
+                name: argocd-cmd-params-cm
+                optional: true
+          resources:
+            {{- toYaml .Values.applicationset.resources | nindent 12 }}
+            

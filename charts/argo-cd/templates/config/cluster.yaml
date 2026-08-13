@@ -1,0 +1,45 @@
+{{- range .Values.argoCd.clusters }}
+---
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: cluster-{{ .name }}
+  namespace: argo-cd
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    name: {{ .clusterSecretStore }}
+    kind: ClusterSecretStore
+  target:
+    name: cluster-{{ .name }}
+    template:
+      metadata:
+        labels:
+          argocd.argoproj.io/secret-type: cluster
+      type: Opaque
+      engineVersion: v2
+      data:
+        name: "{{ .name }}"
+        server: "{{ `{{ .server }}` }}"
+        config: |
+          {
+            "bearerToken": "{{ `{{ .token }}` }}",
+            "tlsClientConfig": {
+              "insecure": false,
+              "caData": "{{ `{{ .caData }}` }}"
+            }
+          }
+  data:
+    - secretKey: server
+      remoteRef:
+        key: {{ .secretKey }}
+        property: server
+    - secretKey: token
+      remoteRef:
+        key: {{ .secretKey }}
+        property: token
+    - secretKey: caData
+      remoteRef:
+        key: {{ .secretKey }}
+        property: caData
+{{- end }}
