@@ -3,6 +3,16 @@ entries:
   authentik:
   - apiVersion: v2
     appVersion: 2.7.5
+    created: "2026-08-13T17:22:04.593730748Z"
+    description: Authentik deployment for Kubernetes
+    digest: 6becd44c498a7b0f840d4810222417c436499e22818ccdc04d771495af618f51
+    name: authentik
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/authentik-0.0.2/authentik-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 2.7.5
     created: "2026-07-27T16:37:13.39469688Z"
     description: Authentik deployment for Kubernetes
     digest: 47d98f593220cd7dce2bdc72c8034aac91b998831c4ef51d825cc9f5f7017521
@@ -830,4 +840,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-08T18:47:10.781723409Z"
+generated: "2026-08-13T17:22:04.593809025Z"
