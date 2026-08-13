@@ -15,6 +15,7 @@ forgejo:
     enabled: true
     authentikHost: "https://authentik.example.com"
     kvPrefix: "authentik"
+    forgejoAdminGroup: "forgejo-admins"
 
 forgejoRunner:
   enabled: true

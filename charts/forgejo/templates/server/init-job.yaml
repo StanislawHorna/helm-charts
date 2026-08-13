@@ -144,7 +144,7 @@ spec:
                   --auto-discover-url "${FORGEJO_AUTH_AUTO_DISCOVER_URL}" \
                   --scopes "openid profile email groups" \
                   --group-claim-name "groups" \
-                  --admin-group "forgejo-admins" \
+                  --admin-group "{{ .Values.forgejo.generateAuthentikOAuthSecrets.forgejoAdminGroup }}" \
                   --icon-url "${FORGEJO_AUTHENTIK_ICON_URL}"
 
                 echo "${FORGEJO_PROVIDER_NAME} OAuth provider added successfully!"
