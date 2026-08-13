@@ -35,6 +35,16 @@ entries:
   forgejo:
   - apiVersion: v2
     appVersion: 15.0.5
+    created: "2026-08-13T17:57:11.551230523Z"
+    description: Forgejo deployment for Kubernetes
+    digest: 5f998d6d1e20a54b3ff52414f38cf910338733461f6e69482b8bbd363a913148
+    name: forgejo
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/forgejo-0.2.1/forgejo-0.2.1.tgz
+    version: 0.2.1
+  - apiVersion: v2
+    appVersion: 15.0.5
     created: "2026-08-08T18:20:09.018263472Z"
     description: Forgejo deployment for Kubernetes
     digest: 32bdc89bca8f6bbab4f4bdbf49226eda01595b06e398926d8400ef363d5c78a9
@@ -850,4 +860,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-13T17:45:10.986308581Z"
+generated: "2026-08-13T17:57:11.551301105Z"
