@@ -7,6 +7,8 @@ metadata:
     {{- include "trek.labels" . | nindent 4 }}
 spec:
   replicas: 1
+  strategy:
+    type: "Recreate"
   selector:
     matchLabels:
       {{- include "trek.labels" . | nindent 6 }}
