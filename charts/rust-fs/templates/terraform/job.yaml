@@ -39,7 +39,7 @@ spec:
             - name: TF_VAR_RESOURCES
               value: {{ include "rust-fs.s3ObjectsMapJson" . | quote}}
             - name: TF_VAR_VAULT_KV_NAME
-              value: {{ .Values.s3Objects.kvNameToStoreSecrets }}
+              value: {{ .Values.vaultNewObjectsStore.kvName }}
             - name: TF_VAR_VAULT_KV_PREFIX
               value: "{{ include "rust-fs.appName" . }}"
             - name: TF_VAR_RUSTFS_INSTANCE

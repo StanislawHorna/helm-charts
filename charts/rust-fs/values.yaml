@@ -33,10 +33,18 @@ resources:
     memory: "1Gi"
     cpu: "1"
 
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+
 vaultAuthentication:
-  enabled: true
   clusterSecretStoreName: "secret-store"
   keyPath: "keyvault/vault.example.com/terraform"
+
+vaultNewObjectsStore:
+  clusterSecretStoreName: "secret-store"
+  kvName: "k8s"
 
 selfSingedRootCA:
   enabled: true
@@ -46,7 +54,6 @@ selfSingedRootCA:
 
 
 s3Objects:
-  kvNameToStoreSecrets: "k8s-stage"
 
   buckets:
     - serviceName: "mimir"
