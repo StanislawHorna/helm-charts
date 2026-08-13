@@ -40,6 +40,8 @@ spec:
                 name: authentik-config
             - secretRef:
                 name: authentik-bootstrap
+            - secretRef:
+                name: email-account
           ports:
             - name: http
               containerPort: 9000

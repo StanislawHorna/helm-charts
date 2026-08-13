@@ -15,6 +15,7 @@ secretsGenerator:
 
 authentikBootstrap:
   adminEmail: "admin@example.com"
+  
   kvPrefix: "authentik"
 
 selfSingedRootCA:
@@ -29,6 +30,10 @@ gateway:
   hostname: authentik.example.com
   gatewayName: traefik-gateway
   gatewayNamespace: traefik
+
+emailCredentials:
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  path: "path/to/email/credentials"
 
 database:
   storageClass: local-path-static
