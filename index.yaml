@@ -3,6 +3,16 @@ entries:
   argo-cd:
   - apiVersion: v2
     appVersion: v2.10.0
+    created: "2026-08-15T09:11:53.93193628Z"
+    description: Minimal custom Helm chart for Argo CD
+    digest: 667acc9faee83edf09cf571c40c4d55e1d4612f2295a7b14094186e68e4a4b3d
+    name: argo-cd
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/argo-cd-0.0.2/argo-cd-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: v2.10.0
     created: "2026-08-13T19:59:35.40247329Z"
     description: Minimal custom Helm chart for Argo CD
     digest: 7d05a6cbc61754d077fccb5ed6fb3cabb8654194462ead5faa619df2ffe260e8
@@ -890,4 +900,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-13T20:02:19.611035184Z"
+generated: "2026-08-15T09:11:53.932018694Z"
