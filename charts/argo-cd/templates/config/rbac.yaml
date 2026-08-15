@@ -12,5 +12,5 @@ data:
 
   # Policy CSV mapping IdP groups to Argo CD roles
   policy.csv: |
-    # Grant admin access to members of the "argo-admin" IdP group
-    g, argo-admin, role:admin
+    # Grant admin access to members of the "{{ .Values.generateAuthentikOAuthSecrets.adminGroup }}" IdP group
+    g, {{ .Values.generateAuthentikOAuthSecrets.adminGroup }}, role:admin

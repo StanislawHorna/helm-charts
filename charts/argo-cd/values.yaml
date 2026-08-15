@@ -107,6 +107,7 @@ generateAuthentikOAuthSecrets:
   enabled: true
   authentikHost: "https://authentik.example.com"
   kvPrefix: "authentik"
+  adminGroup: "argocd-admin"
 
 bootstrap:
   enabled: true
