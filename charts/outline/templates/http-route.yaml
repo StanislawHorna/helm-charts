@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.gateway.gatewayName}}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway
+      name: {{ .Values.gateway.gatewayName}}
       namespace: {{ .Values.gateway.gatewayNamespace }}
       sectionName: web
   hostnames:
@@ -36,7 +38,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.gateway.gatewayName }}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway
+      name: {{ .Values.gateway.gatewayName }}
       namespace: {{ .Values.gateway.gatewayNamespace }}
       sectionName: websecure
   hostnames:
