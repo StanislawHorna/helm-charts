@@ -20,8 +20,11 @@ spec:
             value: /
       {{- if .Values.gateway.allowHttp }}
       backendRefs:
-        - name: {{ include "outline.serviceName" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "outline.serviceName" . }}
           port: {{ include "outline.server.http.port" . }}
+          weight: 1
       {{- else }}
       filters:
         - type: RequestRedirect
@@ -51,6 +54,9 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: {{ include "outline.serviceName" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "outline.serviceName" . }}
           port: {{ include "outline.server.http.port" . }}
+          weight: 1
 {{ end }}
