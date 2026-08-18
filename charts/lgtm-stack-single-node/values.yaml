@@ -25,13 +25,12 @@ grafana:
     image:
       name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
       tag: 26.24.2
-    kvName: "k8s-dev"
+    kvName: "k8s"
     ClusterSecretStoreName: "secret-store"
-    vaultAccess:
-      externalSecret:
-        enabled: true
-        ClusterSecretStoreName: "secret-store"
-        kvName: "keyvault/vault.example.com/terraform"
+    vaultAuthentication:
+      clusterSecretStoreName: "secret-store"
+      keyPath: "keyvault/vault.example.com/terraform"
+  
   defaultAdminCredentials:
     enabled: true
     username: admin
@@ -40,14 +39,6 @@ grafana:
     enabled: true
     authentikHost: "https://authentik.k0s.dev.horna.local"
     kvPrefix: "authentik"
-    secretsGenerator:
-      image:
-        name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
-        tag: 26.24.2
-    vaultConfiguration:
-      ClusterSecretStoreName: "secret-store"
-      kvName: "k8s-dev"
-      vaultAccessKeyPath: "vault/vault.horna.local/terraform"
 
   # Use to trust other services with self-signed certificates
   selfSingedRootCA:
