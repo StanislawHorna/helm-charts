@@ -57,7 +57,7 @@ datasources:
         - datasourceUid: tempo
           name: traceID
     secureJsonData:
-      httpHeaderValue1: "{{ .Release.Name }}"
+      httpHeaderValue1: "{{ .Release.Namespace }}"
   - name: Loki
     type: loki
     uid: loki

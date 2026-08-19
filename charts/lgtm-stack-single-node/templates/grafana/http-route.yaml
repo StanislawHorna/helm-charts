@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.grafana.gateway.gatewayName}}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.grafana.gateway.gatewayName}}
       namespace: {{ .Values.grafana.gateway.gatewayNamespace }}
       sectionName: web
   hostnames:
@@ -18,7 +20,9 @@ spec:
             value: /
       {{- if .Values.grafana.gateway.allowHttp }}
       backendRefs:
-        - name: {{ include "lgtm-stack.componentSVC" . }}
+        -  group: ''	
+          kind: Service	
+          name: {{ include "lgtm-stack.componentSVC" . }}
           port: 3000
       {{- else }}
       filters:
@@ -36,7 +40,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.grafana.gateway.gatewayName }}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.grafana.gateway.gatewayName }}
       namespace: {{ .Values.grafana.gateway.gatewayNamespace }}
       sectionName: websecure
   hostnames:
@@ -47,6 +53,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: {{ include "lgtm-stack.componentSVC" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "lgtm-stack.componentSVC" . }}
           port: 3000
 {{ end }}

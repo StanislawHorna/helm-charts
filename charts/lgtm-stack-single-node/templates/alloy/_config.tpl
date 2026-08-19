@@ -74,7 +74,7 @@ prometheus.remote_write "mimir" {
   endpoint {
     url = "http://{{ include "lgtm-stack.componentSVC" "mimir" }}:8080/api/v1/push"
     headers = {
-      "X-Scope-OrgID" = "{{ .Release.Name }}",
+      "X-Scope-OrgID" = "{{ .Release.Namespace }}",
     }
   }
 }
