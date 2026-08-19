@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.rustFS.gateway.gatewayName}}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.rustFS.gateway.gatewayName}}
       namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
       sectionName: web
   hostnames:
@@ -36,7 +38,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.rustFS.gateway.gatewayName }}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.rustFS.gateway.gatewayName }}
       namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
       sectionName: websecure
   hostnames:
@@ -65,7 +69,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.rustFS.gateway.gatewayName}}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.rustFS.gateway.gatewayName}}
       namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
       sectionName: web
   hostnames:
@@ -95,7 +101,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.rustFS.gateway.gatewayName }}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.rustFS.gateway.gatewayName }}
       namespace: {{ .Values.rustFS.gateway.gatewayNamespace }}
       sectionName: websecure
   hostnames:
