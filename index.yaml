@@ -127,6 +127,34 @@ entries:
   lgtm-stack-single-node:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-08-19T20:34:30.525067238Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 7.2.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.52.0
+    - condition: alloy.enabled
+      name: alloy
+      repository: https://grafana.github.io/helm-charts
+      version: 1.2.1
+    description: A Helm chart for the LGTM stack (Loki, Grafana, Tempo, Mimir, Alloy)
+      for a single node cluster.
+    digest: eb27941a9ff7ed07833a28aaf669fd350752d4dea0bd972f1615d9005f1408bb
+    name: lgtm-stack-single-node
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.3.4/lgtm-stack-single-node-0.3.4.tgz
+    version: 0.3.4
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-08-19T07:14:14.395267531Z"
     dependencies:
     - condition: crds.enabled
@@ -817,6 +845,16 @@ entries:
   rust-fs:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-08-19T20:34:30.757098421Z"
+    description: A Helm chart for the rust-FS application.
+    digest: b8e36e4394af9234f6edd14fb4daef75b644f406ec9825739e4a81e206e28536
+    name: rust-fs
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/rust-fs-0.3.3/rust-fs-0.3.3.tgz
+    version: 0.3.3
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-08-13T17:45:10.9862013Z"
     description: A Helm chart for the rust-FS application.
     digest: 9cde03c9093d79aa637ec3c2453fce9ea306d3e24856286e0f8aea6738afdd22
@@ -1006,4 +1044,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-19T07:14:14.395477756Z"
+generated: "2026-08-19T20:34:30.757297418Z"
