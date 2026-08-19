@@ -6,7 +6,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.loki.gateway.gatewayName}}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.loki.gateway.gatewayName}}
       namespace: {{ .Values.loki.gateway.gatewayNamespace }}
       sectionName: web
   hostnames:
@@ -36,7 +38,9 @@ metadata:
   namespace: {{ .Release.Namespace }}
 spec:
   parentRefs:
-    - name: {{ .Values.loki.gateway.gatewayName }}
+    - group: gateway.networking.k8s.io	
+      kind: Gateway	
+      name: {{ .Values.loki.gateway.gatewayName }}
       namespace: {{ .Values.loki.gateway.gatewayNamespace }}
       sectionName: websecure
   hostnames:

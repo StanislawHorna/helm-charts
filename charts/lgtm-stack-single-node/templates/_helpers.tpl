@@ -29,7 +29,7 @@ Selector labels
 */}}
 {{- define "lgtm-stack.selectorLabels" -}}
 app.kubernetes.io/name: {{ include "lgtm-stack.name" . }}
-app.kubernetes.io/instance: {{ .Release.Name }}
+app.kubernetes.io/instance: {{ .Release.Namespace }}
 {{- end -}}
 
 {{/* Check if ServiceMonitor CRD is installed */}}
