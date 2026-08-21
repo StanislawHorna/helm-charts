@@ -20,7 +20,9 @@ spec:
             value: /
       {{- if .Values.loki.gateway.allowHttp }}
       backendRefs:
-        - name: {{ include "lgtm-stack.componentSVC" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "lgtm-stack.componentSVC" . }}
           port: 3100
       {{- else }}
       filters:
@@ -51,6 +53,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: {{ include "lgtm-stack.componentSVC" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "lgtm-stack.componentSVC" . }}
           port: 3100
 {{ end }}
