@@ -825,6 +825,17 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.0.1/lgtm-stack-single-node-0.0.1.tgz
     version: 0.0.1
+  netbox:
+  - apiVersion: v2
+    appVersion: 5.0.2
+    created: "2026-08-22T20:03:28.324634693Z"
+    description: A Helm chart for the Netbox application.
+    digest: eaa3c270f3b362417fb422ed84d1454468b5d381f69127d1b25c3898e6ebbc0e
+    name: netbox
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/netbox-0.0.1/netbox-0.0.1.tgz
+    version: 0.0.1
   omada-exporter:
   - apiVersion: v2
     appVersion: 25.36.0
@@ -1120,4 +1131,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-22T07:55:51.879209478Z"
+generated: "2026-08-22T20:03:28.324785165Z"
