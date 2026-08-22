@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: netbox-custom-pipelines
+  namespace: {{ .Release.Namespace }}
+data:
+  {{- $files := .Files.Glob "files/custom_pipelines/*.py" }}
+  {{- range $path, $bytes := $files }}
+  {{ base $path }}: |-
+{{ $.Files.Get $path | indent 4 }}
+  {{- end }}
+  

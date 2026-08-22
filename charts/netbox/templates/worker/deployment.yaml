@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "netbox.worker.appName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "netbox.worker.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "netbox.worker.appName" . }}
+    spec:
+      volumes:
+        {{- include "volumes" . | indent 8 }}
+      initContainers:
+        {{- include "initContainer.merge-ca-bundle" . | indent 8 }}
+      containers:
+        - name: netbox-worker
+          image: "{{ .Values.netbox.image.name }}:{{ .Values.netbox.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          command: 
+            - "/opt/netbox/venv/bin/python3"
+            - "/opt/netbox/netbox/manage.py"
+            - "rqworker"
+          env:
+            {{- include "env" . | indent 12 }}
+          envFrom:
+            {{- include "envFrom" . | indent 12 }}
+          ports:
+            - containerPort: {{ include "netbox.server.http.port" . }}
+          
+          volumeMounts:
+            {{- include "volumeMounts" . | indent 12 }}
+          resources:
+            {{- .Values.netbox.worker.resources | toYaml | nindent 12 }}
+          readinessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pgrep -f rqworker > /dev/null"
+            initialDelaySeconds: 20
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            exec:
+              command:
+                - sh
+                - -c
+                - "pgrep -f rqworker > /dev/null"
+            initialDelaySeconds: 30
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 3

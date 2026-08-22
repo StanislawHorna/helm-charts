@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "netbox.appName" . }}
+  namespace: {{ .Release.Namespace }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "netbox.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "netbox.appName" . }}
+    spec:
+      volumes:
+        {{- include "volumes" . | indent 8 }}
+      initContainers:
+        {{- include "initContainer.merge-ca-bundle" . | indent 8 }}
+      containers:
+        - name: netbox
+          image: "{{ .Values.netbox.image.name }}:{{ .Values.netbox.image.tag }}"
+          imagePullPolicy: IfNotPresent
+          env:
+            {{- include "env" . | indent 12 }}
+          envFrom:
+            {{- include "envFrom" . | indent 12 }}
+          ports:
+            - containerPort: {{ include "netbox.server.http.port" . }}
+          volumeMounts:
+            {{- include "volumeMounts" . | indent 12 }}
+          resources:
+            {{- .Values.netbox.server.resources | toYaml | nindent 12 }}
+          
+          readinessProbe:
+            httpGet:
+              path: /login/
+              port: {{ include "netbox.server.http.port" . }}
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          livenessProbe:
+            httpGet:
+              path: /login/
+              port: {{ include "netbox.server.http.port" . }}
+              httpHeaders:
+                - name: Host
+                  value: localhost
+            initialDelaySeconds: 15
+            periodSeconds: 20
+            timeoutSeconds: 5
+            failureThreshold: 5
+            

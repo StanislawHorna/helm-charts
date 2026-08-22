@@ -1,0 +1,80 @@
+netbox:
+  image:
+    name: netboxcommunity/netbox
+    tag: "latest-5.0.2"
+  
+  server:
+    resources:
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+  worker:
+    resources:
+      limits:
+        cpu: "1"
+        memory: "2Gi"
+      requests:
+        cpu: "100m"
+        memory: "128Mi"
+  
+  adminBootstrap:
+    username: "admin"
+    email: "admin@example.com"
+
+  persistence:
+    media:
+      storageClass: "local-path-static"
+      size: 20Gi
+
+generateAuthentikOAuthSecrets:
+  enabled: true
+  authentikHost: "https://authentik.example.com"
+  kvPrefix: "authentik"
+  adminGroupName: "netbox-admin"
+  viewerGroupName: "netbox-viewer"
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s"
+  kvPrefix: "netbox"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+
+selfSingedRootCA:
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
+
+cache:
+  image:
+    name: redis
+    tag: "7-alpine"
+  resources:
+    limits:
+      cpu: "1"
+      memory: "2Gi"
+    requests:
+      cpu: "100m"
+      memory: "128Mi"
+
+database:
+  storageClass: "local-path-static"
+  vaultConfiguration:
+    ClusterSecretStoreName: "secret-store"
+    kvName: "k8s"
+    kvPrefix: "postgres"
+
+gateway:
+  enabled: true
+  hostname: "netbox.example.com"
+  allowHttp: false
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
