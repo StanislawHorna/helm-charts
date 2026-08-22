@@ -828,6 +828,16 @@ entries:
   netbox:
   - apiVersion: v2
     appVersion: 5.0.2
+    created: "2026-08-22T20:36:24.034859938Z"
+    description: A Helm chart for the Netbox application.
+    digest: 6591c9f9a83e65ee05a4c52680a6528c18a78cce0612ba85094b7885264efc84
+    name: netbox
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/netbox-0.0.2/netbox-0.0.2.tgz
+    version: 0.0.2
+  - apiVersion: v2
+    appVersion: 5.0.2
     created: "2026-08-22T20:03:28.324634693Z"
     description: A Helm chart for the Netbox application.
     digest: eaa3c270f3b362417fb422ed84d1454468b5d381f69127d1b25c3898e6ebbc0e
@@ -1131,4 +1141,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-22T20:03:28.324785165Z"
+generated: "2026-08-22T20:36:24.034978064Z"
