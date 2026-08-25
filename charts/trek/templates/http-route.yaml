@@ -20,7 +20,9 @@ spec:
             value: /
       {{- if .Values.trek.gateway.allowHttp }}
       backendRefs:
-        - name: {{ include "trek.serviceName" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "trek.serviceName" . }}
           port: {{ include "trek.http.port" . }}
       {{- else }}
       filters:
@@ -51,6 +53,8 @@ spec:
             type: PathPrefix
             value: /
       backendRefs:
-        - name: {{ include "trek.serviceName" . }}
+        - group: ''	
+          kind: Service	
+          name: {{ include "trek.serviceName" . }}
           port: {{ include "trek.http.port" . }}
 {{ end }}
