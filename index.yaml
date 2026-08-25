@@ -1109,6 +1109,15 @@ entries:
   trek:
   - apiVersion: v2
     appVersion: 3.4.1
+    created: "2026-08-25T18:26:30.004348353Z"
+    description: A Helm chart for the trek application.
+    digest: a27f72e656f9af3c996429b4326d36bc6dc352d39f72e2c78db8fa194686a96e
+    name: trek
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/trek-0.0.3/trek-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 3.4.1
     created: "2026-08-13T20:02:19.610870999Z"
     description: A Helm chart for the trek application.
     digest: 9505ade6acfd6e55bfd40463c7d355b86ddcdccde2f60dedd87c6590b716c076
@@ -1141,4 +1150,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-22T20:36:24.034978064Z"
+generated: "2026-08-25T18:26:30.004406447Z"
