@@ -124,6 +124,18 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/forgejo-0.0.1/forgejo-0.0.1.tgz
     version: 0.0.1
+  immich:
+  - apiVersion: v2
+    appVersion: 3.1.0
+    created: "2026-08-25T19:29:23.142880794Z"
+    description: Immich deployment for Kubernetes, that supports NFS mapping for photos
+      external library.
+    digest: fad68340faf6a5aeb322feaafecbf5cf972cc0c98a5f776863aa4492c4364d4d
+    name: immich
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/immich-0.0.1/immich-0.0.1.tgz
+    version: 0.0.1
   lgtm-stack-single-node:
   - apiVersion: v2
     appVersion: 1.0.0
@@ -1150,4 +1162,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-08-25T18:26:30.004406447Z"
+generated: "2026-08-25T19:29:23.142993051Z"
