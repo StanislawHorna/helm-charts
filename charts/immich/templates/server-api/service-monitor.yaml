@@ -1,0 +1,16 @@
+{{- if .Capabilities.APIVersions.Has "monitoring.coreos.com/v1" }}
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "immich.server.api.serviceMonitorName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      app: {{ include "immich.server.api.appName" . }}
+  endpoints:
+    - port: metrics-api
+      scheme: http
+{{- end }}

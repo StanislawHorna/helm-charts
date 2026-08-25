@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "immich.ml.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "immich.ml.appName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: http
+      protocol: TCP
+      port: {{ include "immich.ml.port" . }}
+      targetPort: {{ include "immich.ml.port" . }}
+  selector:
+    app: {{ include "immich.ml.appName" . }}
+    

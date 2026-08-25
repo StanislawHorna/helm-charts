@@ -1,0 +1,17 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: immich-oauth
+  namespace: {{ .Release.Namespace }}
+spec:
+  refreshInterval: "1h"
+  secretStoreRef:
+    name: {{ .Values.secretsGenerator.ClusterSecretStoreName }}
+    kind: ClusterSecretStore
+  target:
+    name: immich-oauth
+  dataFrom:
+  - extract:
+      key: "{{ .Values.generateAuthentikOAuthSecrets.kvPrefix}}/{{ .Values.generateAuthentikOAuthSecrets.authentikHost | trimPrefix "https://" | trimPrefix "http://" }}/{{ include "immich.authentikOAuthSecrets.key_name" . }}"
+      conversionStrategy: Default
+      decodingStrategy: None

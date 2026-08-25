@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "immich.ml.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "immich.ml.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "immich.ml.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "immich.ml.appName" . }}
+    spec:
+      volumes:
+        - name: ml-cache
+          persistentVolumeClaim:
+            claimName: {{ include "immich.ml.cache.pvcName" . }}
+      containers:
+      - name: immich-machine-learning
+        image: ghcr.io/immich-app/immich-machine-learning:{{ .Values.immichMachineLearning.image.tag }}
+        resources:
+          {{- toYaml .Values.immichMachineLearning.resources | nindent 10 }}
+        
+        envFrom:
+          - configMapRef:
+              name: immich-server-config
+        
+        ports:
+          - name: http
+            containerPort: {{ include "immich.ml.port" . }}
+            protocol: TCP
+        
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+          
+        startupProbe:
+          failureThreshold: 60
+          httpGet:
+            path: /ping
+            port: http
+          initialDelaySeconds: 0
+          periodSeconds: 10
+          timeoutSeconds: 1
+        
+        volumeMounts:
+          - mountPath: /cache
+            name: ml-cache

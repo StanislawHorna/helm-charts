@@ -1,0 +1,120 @@
+immich:
+  image:
+    tag: v3.1.0
+  api:
+    resources:
+      requests:
+        memory: "256Mi"
+        cpu: "100m"
+      limits:
+        memory: "2Gi"
+        cpu: "2"
+  worker:
+    resources:
+      requests:
+        memory: "128Mi"
+        cpu: "50m"
+      limits:
+        memory: "2Gi"
+        cpu: "2"
+
+  persistence:
+    library:
+      size: 100Gi
+      storageClass: local-path-static
+    profiles:
+      size: 10Gi
+      storageClass: local-path-static
+    thumbs:
+      size: 100Gi
+      storageClass: local-path-static
+    encodedVideos:
+      size: 100Gi
+      storageClass: local-path-static
+    uploads:
+      size: 300Gi
+      storageClass: nfs-storage-static
+    sqlDbBackups:
+      size: 50Gi
+      storageClass: nfs-storage-static
+
+  externalLibraries:
+    - name: nfs-homes
+      server: 10.0.10.1
+      share: /volume1/homes
+
+generateAuthentikOAuthSecrets:
+  enabled: true
+  authentikHost: "https://authentik.example.com"
+  kvPrefix: "authentik"
+
+gateway:
+  enabled: true
+  allowHttp: true
+  hostname: immich.example.com
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+
+immichMachineLearning:
+  image:
+    tag: v3.1.0
+  resources:
+    requests:
+      memory: "512Mi"
+      cpu: "100m"
+    limits:
+      memory: "4Gi"
+      cpu: "4"
+  persistence:
+    cache:
+      size: 20Gi
+      storageClass: local-path-static
+
+
+database:
+  storage:
+    size: 50Gi
+    storageClass: "local-path-static"
+  backup:
+    enabled: false
+    schedule: "0 0 * * * *"
+    s3Config:
+      destinationPath: "s3://immich-pg-backup/"
+      endpointURL: "http://rust-fs.rust-fs.svc.cluster.local:9000"
+      retentionPolicy: "30d"
+      credentialsInVault:
+        path: "rust-fs/s3/immich"
+        accessKeyProperty: "access_key"
+        secretKeyProperty: "secret_key"
+  vaultConfiguration:
+    ClusterSecretStoreName: "kv-k8s"
+    kvPrefix: "postgres"
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "k8s"
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "hcp-vault-secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "certificate/example.com/root"
+  certificateProperty: "certificate"
+
+redisCache:
+  image:
+    tag: 7-alpine
+  resources:
+    requests:
+      memory: "128Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"

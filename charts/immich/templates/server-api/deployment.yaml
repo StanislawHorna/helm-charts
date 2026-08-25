@@ -1,0 +1,81 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "immich.server.api.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "immich.server.api.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "immich.server.api.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "immich.server.api.appName" . }}
+    spec:
+      volumes:
+      {{- include "immich.server.volumes" . | indent 6 }}
+
+      initContainers:
+      {{- include "immich.server.initContainer" . | indent 8 }}
+
+      containers:
+      - name: immich-server-api
+        image: ghcr.io/immich-app/immich-server:{{ .Values.immich.image.tag }}
+        resources:
+          {{- toYaml .Values.immich.api.resources | nindent 10 }}
+        
+        env:
+          - name: IMMICH_WORKERS_INCLUDE
+            value: api
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-creds
+                key: password
+        envFrom:
+          - configMapRef:
+              name: immich-server-config
+          - secretRef:
+              name: immich-oauth
+        ports:
+          - containerPort: 2283
+            name: http
+            protocol: TCP
+          - containerPort: 8081
+            name: metrics-api
+            protocol: TCP
+        
+        livenessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 5
+        
+        readinessProbe:
+          failureThreshold: 3
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 5
+
+        startupProbe:
+          failureThreshold: 30
+          httpGet:
+            path: /api/server/ping
+            port: http
+          initialDelaySeconds: 1
+          periodSeconds: 10
+          timeoutSeconds: 5
+        
+        volumeMounts:
+        {{- include "immich.server.volumeMounts" . | indent 8 }}
+
+      

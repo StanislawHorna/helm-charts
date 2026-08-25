@@ -1,0 +1,6 @@
+apiVersion: v2
+name: immich
+description: Immich deployment for Kubernetes, that supports NFS mapping for photos external library. 
+type: application
+version: 0.0.1
+appVersion: "3.1.0"

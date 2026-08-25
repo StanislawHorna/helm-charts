@@ -1,0 +1,23 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: immich-server-config
+  namespace: {{ .Release.Namespace }}
+data:
+  IMMICH_LOG_FORMAT: "json"
+  IMMICH_TELEMETRY_INCLUDE: "all"
+
+  IMMICH_MACHINE_LEARNING_URL: {{ include "immich.ml.url" . }}
+  REDIS_HOSTNAME: {{ include "immich.cache.hostname" . }}
+  
+  DB_HOSTNAME: {{ include "db.hostname" . }}
+  DB_PORT: "5432"
+  DB_DATABASE_NAME: {{ include "db.databaseName" . }}
+  DB_USERNAME: {{ include "db.username" . }}
+
+  NODE_EXTRA_CA_CERTS: "/etc/ssl/certs/root-ca.crt"
+
+  OAUTH_SCOPE: "openid profile email entitlements groups"
+  OAUTH_BUTTON_TEXT: "Login with Authentik"
+  OAUTH_AUTO_REGISTER: "true"
+  OAUTH_STORAGE_LABEL_CLAIM: "preferred_username"

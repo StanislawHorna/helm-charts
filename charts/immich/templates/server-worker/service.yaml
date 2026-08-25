@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "immich.server.worker.serviceName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "immich.server.worker.appName" . }}
+spec:
+  type: ClusterIP
+  ports:
+    - name: metrics-ms
+      protocol: TCP
+      port: 8082
+      targetPort: 8082
+  selector:
+    app: {{ include "immich.server.worker.appName" . }}
+    

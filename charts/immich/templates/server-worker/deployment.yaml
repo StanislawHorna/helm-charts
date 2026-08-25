@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "immich.server.worker.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    app: {{ include "immich.server.worker.appName" . }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ include "immich.server.worker.appName" . }}
+  template:
+    metadata:
+      labels:
+        app: {{ include "immich.server.worker.appName" . }}
+    spec:
+      volumes:
+      {{- include "immich.server.volumes" . | indent 6 }}
+
+      initContainers:
+      {{- include "immich.server.initContainer" . | indent 8 }}
+
+      containers:
+      - name: immich-server-worker
+        image: ghcr.io/immich-app/immich-server:{{ .Values.immich.image.tag }}
+        resources:
+          {{- toYaml .Values.immich.worker.resources | nindent 10 }}
+        
+        env:
+          - name: IMMICH_WORKERS_EXCLUDE
+            value: api
+          - name: DB_PASSWORD
+            valueFrom:
+              secretKeyRef:
+                name: db-creds
+                key: password
+        envFrom:
+          - configMapRef:
+              name: immich-server-config
+        ports:
+          - containerPort: 8082
+            name: metrics-ms
+            protocol: TCP
+        
+        volumeMounts:
+        {{- include "immich.server.volumeMounts" . | indent 6 }}
+
