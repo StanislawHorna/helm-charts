@@ -25,6 +25,7 @@ trek:
     enabled: true
     authentikHost: "https://authentik.example.com"
     kvPrefix: "authentik"
+    adminGroup: "trek-admins"
   gateway:
     enabled: true
     gatewayName: traefik-gateway
