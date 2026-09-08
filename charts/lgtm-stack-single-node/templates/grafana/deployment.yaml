@@ -52,8 +52,10 @@ spec:
           env:
             - name: SSL_CERT_FILE
               value: /etc/ssl/certs/root-ca.crt
-            - name: GF_FEATURE_TOGGLES_ENABLE
-              value: appsProvisioning
+            {{- range $key, $value := .Values.grafana.env }}
+            - name: {{ $key }}
+              value: {{ $value | quote }}
+            {{- end }}
           envFrom:
           {{- if .Values.grafana.generateAuthentikOAuthSecrets.enabled }}
             - secretRef:
