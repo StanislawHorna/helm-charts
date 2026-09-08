@@ -23,9 +23,11 @@ spec:
         - name: grafana-storage
           persistentVolumeClaim:
             claimName: {{ include "lgtm-stack.componentPVC" . }}
+      {{- if .Values.grafana.provisionDatasources }}
         - name: grafana-datasources
           configMap:
             name: grafana-datasources
+      {{- end }}
       {{- if .Values.grafana.provisionDashboards }}
         - name: grafana-dashboard-provider
           configMap:
@@ -70,8 +72,10 @@ spec:
               mountPath: /var/lib/grafana
             - name: grafana-config
               mountPath: /etc/grafana/conf
+          {{- if .Values.grafana.provisionDatasources }}
             - name: grafana-datasources
               mountPath: /etc/grafana/provisioning/datasources
+          {{- end }}
           {{- if .Values.grafana.provisionDashboards }}
             - name: grafana-dashboard-provider
               mountPath: /etc/grafana/provisioning/dashboards
