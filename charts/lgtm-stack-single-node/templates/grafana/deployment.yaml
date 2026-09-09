@@ -16,6 +16,10 @@ spec:
       labels:
         app: grafana
     spec:
+      securityContext:
+          fsGroup: 472
+          supplementalGroups:
+            - 0
       volumes:
         - name: grafana-config
           configMap:
