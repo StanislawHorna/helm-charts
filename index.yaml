@@ -139,6 +139,34 @@ entries:
   lgtm-stack-single-node:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-09-09T18:08:16.146198337Z"
+    dependencies:
+    - condition: crds.enabled
+      name: crds
+      repository: ""
+      version: 0.0.0
+    - condition: kubeStateMetrics.enabled
+      name: kube-state-metrics
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 7.2.0
+    - condition: nodeExporter.enabled
+      name: prometheus-node-exporter
+      repository: https://prometheus-community.github.io/helm-charts
+      version: 4.52.0
+    - condition: alloy.enabled
+      name: alloy
+      repository: https://grafana.github.io/helm-charts
+      version: 1.2.1
+    description: A Helm chart for the LGTM stack (Loki, Grafana, Tempo, Mimir, Alloy)
+      for a single node cluster.
+    digest: f724d3ec1fc75af5aed98713f3f1a679fff41c9045545b22ef8cd09a6790bb36
+    name: lgtm-stack-single-node
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/lgtm-stack-single-node-0.4.4/lgtm-stack-single-node-0.4.4.tgz
+    version: 0.4.4
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-09-09T18:00:03.70401509Z"
     dependencies:
     - condition: crds.enabled
@@ -1310,4 +1338,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-09T18:00:03.704123292Z"
+generated: "2026-09-09T18:08:16.146578311Z"
