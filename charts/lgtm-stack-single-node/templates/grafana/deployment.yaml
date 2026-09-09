@@ -45,6 +45,15 @@ spec:
           secret:
             secretName: self-signed-root-ca
       {{- end }}
+      initContainers:
+        - name: init-chown-data
+          image: busybox:1.36
+          command: ["chown", "-R", "472:472", "/var/lib/grafana"]
+          securityContext:
+            runAsUser: 0     
+          volumeMounts:
+            - name: grafana-storage  
+              mountPath: /var/lib/grafana
       containers:
         - name: grafana
           image: "grafana/grafana:{{ .Values.grafana.image.tag }}"
@@ -91,3 +100,21 @@ spec:
               mountPath: /etc/ssl/certs/root-ca.crt
               subPath: root-ca.crt
           {{- end }}
+          readinessProbe:
+            failureThreshold: 3
+            httpGet:
+              path: /robots.txt
+              port: 3000
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 2
+          livenessProbe:
+            failureThreshold: 3
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            successThreshold: 1
+            tcpSocket:
+              port: 3000
+            timeoutSeconds: 1
