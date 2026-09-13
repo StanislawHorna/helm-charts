@@ -1338,4 +1338,15 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vault-integration-0.0.1/vault-integration-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-09T18:08:16.146578311Z"
+  vikunja:
+  - apiVersion: v2
+    appVersion: 2.6.0
+    created: "2026-09-13T14:01:11.753938094Z"
+    description: A Helm chart for Vikunja
+    digest: ec7be632359b18e32bcd2e500e902ca1a6e3e976da703d08d06ae9b1a672496d
+    name: vikunja
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/vikunja-0.0.1/vikunja-0.0.1.tgz
+    version: 0.0.1
+generated: "2026-09-13T14:01:11.754083632Z"
