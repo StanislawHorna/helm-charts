@@ -13,18 +13,6 @@ rust-fs
 rust-fs
 {{- end -}}
 
-{{/*
-Transforms a list of buckets into a map keyed by serviceName, then outputs it as JSON
-*/}}
-{{- define "rust-fs.s3ObjectsMapJson" -}}
-  {{- $result := dict -}}
-  {{- range .Values.s3Objects.buckets }}
-    {{- $bucketMap := dict "serviceName" .serviceName "bucketName" .bucketName -}}
-    {{- $_ := set $result .serviceName $bucketMap -}}
-  {{- end }}
-  {{- $result | toJson -}}
-{{- end -}}
-
 {{- define "rust-fs.admin.credentials.key_name_prefix" -}}
 rust-fs
 {{- end -}}
