@@ -1074,6 +1074,16 @@ entries:
   rust-fs:
   - apiVersion: v2
     appVersion: 1.0.0
+    created: "2026-09-13T14:15:57.334639796Z"
+    description: A Helm chart for the rust-FS application.
+    digest: 653153cffe5e9ffbeddf7ce161b3a91560a3d98431df1b40c4ce15075c0377ed
+    name: rust-fs
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/rust-fs-0.3.7/rust-fs-0.3.7.tgz
+    version: 0.3.7
+  - apiVersion: v2
+    appVersion: 1.0.0
     created: "2026-09-13T14:09:04.278828081Z"
     description: A Helm chart for the rust-FS application.
     digest: ad55ab35def368a82d7a7d4b2351dc798771906a1516b392b8c737335de7b734
@@ -1359,4 +1369,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vikunja-0.0.1/vikunja-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-13T14:09:04.279001373Z"
+generated: "2026-09-13T14:15:57.334789768Z"
