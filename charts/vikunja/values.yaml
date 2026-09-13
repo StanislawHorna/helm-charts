@@ -1,0 +1,56 @@
+
+image:
+  repository: vikunja/vikunja
+  tag: "2.6.0"
+  pullPolicy: IfNotPresent
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+gateway:
+  enabled: true
+  rootUrl: "https://vikunja.example.com"
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+  allowHttp: false
+
+emailCredentials:
+  enabled: false
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  path: "path/to/email/credentials"
+
+persistence:
+  files:
+    storageClassName: "local-path-static"
+    size: 10Gi
+  db:
+    storageClassName: "local-path-static"
+    size: 10Gi
+
+secretsGenerator:
+  image:
+    name: ghcr.io/stanislawhorna/vault-initial-secrets-generator
+    tag: 26.24.2
+  kvName: "Key-Vault"
+  ClusterSecretStoreName: "secret-store"
+  vaultAccess:
+    externalSecret:
+      enabled: true
+      ClusterSecretStoreName: "secret-store"
+      kvName: "keyvault/vault.example.com/terraform"
+  
+generateAuthentikOAuthSecrets:
+  enabled: true
+  authentikHost: "https://authentik.example.com"
+  kvPrefix: "authentik"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"

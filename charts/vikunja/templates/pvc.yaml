@@ -1,0 +1,25 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "vikunja.appName" . }}-files
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.persistence.files.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.files.size }}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: {{ include "vikunja.appName" . }}-db
+  namespace: {{ .Release.Namespace }}
+spec:
+  accessModes:
+    - ReadWriteOnce
+  storageClassName: {{ .Values.persistence.db.storageClassName }}
+  resources:
+    requests:
+      storage: {{ .Values.persistence.db.size }}

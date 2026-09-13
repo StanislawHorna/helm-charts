@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "vikunja.appName" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "vikunja.deployment.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  strategy:
+    type: "Recreate"
+  selector:
+    matchLabels:
+      {{- include "vikunja.deployment.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "vikunja.deployment.labels" . | nindent 8 }}
+    spec:
+      containers:
+        - name: {{ include "vikunja.appName" . }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag  }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - containerPort: {{ include "vikunja.http.port" . }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "vikunja.appName" . }}-env
+            - secretRef:
+                name: {{ include "vikunja.appName" . }}-email-account
+
+          volumeMounts:
+            - mountPath: /app/vikunja/files
+              name: files-volume
+            - mountPath: /db
+              name: db-volume
+            - name: config-volume
+              mountPath: /app/vikunja/config.yml
+              subPath: config.yml
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}
+          resources:
+            {{- .Values.resources | toYaml | nindent 12 }}
+      volumes:
+        - name: files-volume
+          persistentVolumeClaim:
+            claimName: {{ include "vikunja.appName" . }}-files
+        - name: db-volume
+          persistentVolumeClaim:
+            claimName: {{ include "vikunja.appName" . }}-db
+        - name: config-volume
+          secret:
+            secretName: {{ include "vikunja.appName" . }}-oauth
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
