@@ -52,11 +52,3 @@ selfSingedRootCA:
   kvName: "keyvault/self-signed-root-ca"
   certificateProperty: "certificate"
 
-
-s3Objects:
-
-  buckets:
-    - serviceName: "mimir"
-      bucketName: "mimir-data"
-    - serviceName: "terraform"
-      bucketName: "terraform-state"
