@@ -20,13 +20,12 @@ data:
       network: ""
       enable_ipv6: false
       privileged: true
-      options: "-v /var/run/docker.sock:/var/run/docker.sock -v /etc/docker/certs.d/{{ .Values.gateway.hostname }}:/etc/docker/certs.d/{{ .Values.gateway.hostname }}:ro -v /etc/buildkit/buildkitd.toml:/etc/buildkit/buildkitd.toml:ro -v /etc/ssl/certs/root-ca.crt:/etc/ssl/certs/root-ca.crt:ro -e GIT_SSL_CAINFO=/etc/ssl/certs/root-ca.crt -e SSL_CERT_FILE=/etc/ssl/certs/root-ca.crt"
-      container:
+      options: "-v /var/run/docker.sock:/var/run/docker.sock -v /etc/docker/certs.d/{{ .Values.gateway.hostname }}:/etc/docker/certs.d/{{ .Values.gateway.hostname }}:ro -v /etc/buildkit/buildkitd.toml:/etc/buildkit/buildkitd.toml:ro -v /etc/ssl/certs/ca.crt:/etc/ssl/certs/ca.crt:ro -e GIT_SSL_CAINFO=/etc/ssl/certs/ca.crt -e SSL_CERT_FILE=/etc/ssl/certs/ca.crt"
       valid_volumes:
         - "/var/run/docker.sock"
         - "/etc/docker/certs.d/{{ .Values.gateway.hostname }}"
         - "/etc/buildkit/buildkitd.toml"
-        - /etc/ssl/certs/root-ca.crt
+        - /etc/ssl/certs/ca.crt
       volumes:
         - "/var/run/docker.sock:/var/run/docker.sock"
         - "/etc/docker/certs.d/{{ .Values.gateway.hostname }}:/etc/docker/certs.d/{{ .Values.gateway.hostname }}:ro"
