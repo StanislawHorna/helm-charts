@@ -116,6 +116,8 @@ spec:
               mountPath: /etc/docker/certs.d/{{ .Values.gateway.hostname }}
             - name: buildkit-config
               mountPath: /etc/buildkit
+            - name: GIT_SSL_CAINFO
+              value: "/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"
           resources:
             {{- .Values.forgejoRunner.resources | toYaml | nindent 12 }}
 
