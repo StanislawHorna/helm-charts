@@ -102,6 +102,10 @@ spec:
               value: "unix:///var/run/docker.sock"
             - name: DOCKER_TLS_CERTDIR
               value: ""
+            - name: GIT_SSL_CAINFO
+              value: "/etc/ssl/certs/root-ca.crt"
+            - name: SSL_CERT_FILE
+              value: "/etc/ssl/certs/root-ca.crt"
           volumeMounts:
             - name: shared-token
               mountPath: /shared
@@ -111,11 +115,14 @@ spec:
               mountPath: /data
             - name: runner-config
               mountPath: /etc/runner
-            # --- MOUNTED TO RUNNER POD FOR CONTAINER BIND-MOUNTS ---
             - name: ca-volume
-              mountPath: /etc/docker/certs.d/{{ .Values.gateway.hostname }}
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: ca.crt
             - name: buildkit-config
               mountPath: /etc/buildkit
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: ca.crt
           resources:
             {{- .Values.forgejoRunner.resources | toYaml | nindent 12 }}
 
