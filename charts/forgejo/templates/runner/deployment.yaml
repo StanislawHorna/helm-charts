@@ -115,9 +115,6 @@ spec:
               mountPath: /data
             - name: runner-config
               mountPath: /etc/runner
-            - name: ca-volume
-              mountPath: /etc/ssl/certs/root-ca.crt
-              subPath: ca.crt
             - name: buildkit-config
               mountPath: /etc/buildkit
             - name: ca-volume
