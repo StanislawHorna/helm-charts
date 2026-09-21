@@ -102,8 +102,6 @@ spec:
               value: "unix:///var/run/docker.sock"
             - name: DOCKER_TLS_CERTDIR
               value: ""
-            - name: GIT_SSL_CAINFO
-              value: "/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"
           volumeMounts:
             - name: shared-token
               mountPath: /shared
