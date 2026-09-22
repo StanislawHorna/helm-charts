@@ -70,6 +70,21 @@ spec:
                 exit 1
               fi
 
+              COMBINED_CA="/tmp/combined-ca.crt"
+              if [ -f /etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt ]; then
+                if [ -f /etc/ssl/certs/ca-certificates.crt ]; then
+                  cp /etc/ssl/certs/ca-certificates.crt "$COMBINED_CA"
+                elif [ -f /etc/ssl/cert.pem ]; then
+                  cp /etc/ssl/cert.pem "$COMBINED_CA"
+                else
+                  touch "$COMBINED_CA"
+                fi
+                echo "" >> "$COMBINED_CA"
+                cat /etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt >> "$COMBINED_CA"
+                
+                export GIT_SSL_CAINFO="$COMBINED_CA"
+                export SSL_CERT_FILE="$COMBINED_CA"
+              fi
 
               echo "Waiting for Docker daemon socket at /var/run/docker.sock..."
               until [ -S /var/run/docker.sock ]; do
@@ -103,10 +118,6 @@ spec:
               value: "unix:///var/run/docker.sock"
             - name: DOCKER_TLS_CERTDIR
               value: ""
-            - name: GIT_SSL_CAINFO
-              value: "/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"
-            - name: SSL_CERT_FILE
-              value: "/etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt"
           volumeMounts:
             - name: shared-token
               mountPath: /shared
