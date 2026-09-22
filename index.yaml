@@ -56,6 +56,16 @@ entries:
   forgejo:
   - apiVersion: v2
     appVersion: 15.0.5
+    created: "2026-09-22T14:59:10.154092183Z"
+    description: Forgejo deployment for Kubernetes
+    digest: 242e773c86a7a363e77efe0278a9816aff4fa64eeb4a11cd380ca8e51d93367b
+    name: forgejo
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/forgejo-0.2.15/forgejo-0.2.15.tgz
+    version: 0.2.15
+  - apiVersion: v2
+    appVersion: 15.0.5
     created: "2026-09-22T14:56:39.087939282Z"
     description: Forgejo deployment for Kubernetes
     digest: 7f2c1e30d467a65e589da4c896d0ed802c28ef9d0fb75f96a10c35c2004b8a55
@@ -1487,4 +1497,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vikunja-0.0.1/vikunja-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-22T14:56:39.088178737Z"
+generated: "2026-09-22T14:59:10.154209765Z"
