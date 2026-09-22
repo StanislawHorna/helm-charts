@@ -72,6 +72,7 @@ spec:
 
               if [ -f /etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt ]; then
                 echo "Injecting self-signed Root CA into the runner container..."
+                mkdir -p /usr/local/share/ca-certificates
                 cp /etc/docker/certs.d/{{ .Values.gateway.hostname }}/ca.crt /usr/local/share/ca-certificates/root-ca.crt
                 update-ca-certificates || true
               fi
