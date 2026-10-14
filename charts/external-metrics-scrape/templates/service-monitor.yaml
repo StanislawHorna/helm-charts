@@ -16,10 +16,25 @@ spec:
   endpoints:
     - port: {{ .name }}-http-metrics
       interval: {{ .scrape_interval }}
+      {{- if contains "?" .path }}
+      {{- $pathParts := split "?" .path }}
+      path: {{ $pathParts._0 }}
+      params:
+        {{- range $k, $paramStr := split "&" $pathParts._1 }}
+        {{- if ne $k "count" }}
+        {{- if contains "=" $paramStr }}
+        {{- $kv := split "=" $paramStr }}
+        {{- printf "%s:" $kv._0 | nindent 8 }}
+        {{- printf "- %s" $kv._1 | nindent 10 }}
+        {{- end }}
+        {{- end }}
+        {{- end }}
+      {{- else }}
       path: {{ .path }}
+      {{- end }}
       scheme: {{ .scheme }}
       relabelings:
-      - targetLabel: instance
-        replacement: {{ .name }}
+        - targetLabel: instance
+          replacement: {{ .name }}
 {{- end }}
 {{- end }}
