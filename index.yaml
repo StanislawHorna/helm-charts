@@ -45,6 +45,16 @@ entries:
   external-metrics-scrape:
   - apiVersion: v2
     appVersion: 0.0.1
+    created: "2026-10-14T19:52:44.684380812Z"
+    description: A Helm chart for the scraping external metrics with ServiceMonitors.
+    digest: f04a21aabdcc94af3ea97a91a53e6c59709ba19fd5df09246da1d170ab36abdc
+    name: external-metrics-scrape
+    type: application
+    urls:
+    - https://github.com/StanislawHorna/helm-charts/releases/download/external-metrics-scrape-0.0.3/external-metrics-scrape-0.0.3.tgz
+    version: 0.0.3
+  - apiVersion: v2
+    appVersion: 0.0.1
     created: "2026-07-27T16:37:13.549568926Z"
     description: A Helm chart for the scraping external metrics with ServiceMonitors.
     digest: 090c8148520f3254241cb04447ae1baf8ae0a91e5200f54cf97b9841bbc47824
@@ -1507,4 +1517,4 @@ entries:
     urls:
     - https://github.com/StanislawHorna/helm-charts/releases/download/vikunja-0.0.1/vikunja-0.0.1.tgz
     version: 0.0.1
-generated: "2026-09-22T15:04:49.054957367Z"
+generated: "2026-10-14T19:52:44.684585142Z"
