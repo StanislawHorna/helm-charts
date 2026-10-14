@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "gatus.appName" . }}
+  labels:
+    {{ include "gatus.deployment.labels" . | nindent 4 }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      {{ include "gatus.deployment.labels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{ include "gatus.deployment.labels" . | nindent 8 }}
+    spec:
+      initContainers:
+        {{- if .Values.endpointsSync.enabled }}
+        - name: git-sync
+          image: "{{ .Values.gitSyncImage.repository }}:{{ .Values.gitSyncImage.tag }}"
+          imagePullPolicy: {{ .Values.gitSyncImage.pullPolicy }}
+          args:
+            - "--one-time"
+          volumeMounts:
+            - name: git-endpoints-volume
+              mountPath: /tmp/git
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/custom-ca
+              readOnly: true
+            {{- end }}
+          envFrom:
+            - configMapRef:
+                name: {{ include "gatus.appName" . }}-git-sync
+        {{- end }}
+      containers:
+        - name: gatus
+          image: "{{ .Values.gatusImage.repository }}:{{ .Values.gatusImage.tag }}"
+          imagePullPolicy: {{ .Values.gatusImage.pullPolicy }}
+          ports:
+            - containerPort: {{ include "gatus.http.port" . }}
+          env:
+            - name: GATUS_CONFIG_PATH
+              value: "/custom-config"
+            - name: SSL_CERT_DIR
+              value: "/etc/ssl/certs"
+          volumeMounts:
+            - name: base-config-volume
+              mountPath: /custom-config/base
+            - name: data
+              mountPath: /data
+            {{- if .Values.endpointsSync.enabled }}
+            - name: git-endpoints-volume
+              mountPath: /custom-config/iac
+            {{- end }}
+            {{- if .Values.selfSingedRootCA.enabled }}
+            - name: ca-volume
+              mountPath: /etc/ssl/certs/root-ca.crt
+              subPath: root-ca.crt
+            {{- end }}
+            - name: config-endpoints
+              mountPath: /custom-config/cm
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: base-config-volume
+          configMap:
+            name: {{ include "gatus.appName" . }}-base-config
+        {{- if .Values.endpointsSync.enabled }}
+        - name: git-endpoints-volume
+          emptyDir: {}
+        {{- end }}
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ include "gatus.appName" . }}-data
+        {{- if .Values.selfSingedRootCA.enabled }}
+        - name: ca-volume
+          secret:
+            secretName: self-signed-root-ca
+        {{- end }}
+        - name: config-endpoints
+          configMap:
+            name: {{ include "gatus.appName" . }}-base-config-endpoints
+

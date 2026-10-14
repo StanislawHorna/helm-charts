@@ -1,0 +1,14 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: {{ include "gatus.appName" . }}-service-monitor
+  namespace: {{ .Release.Namespace }}
+  labels:
+    release: prometheus
+spec:
+  selector:
+    matchLabels:
+      {{- include "gatus.deployment.labels" . | nindent 6 }}
+  endpoints:
+    - path: /metrics
+      interval: 15s

@@ -1,0 +1,14 @@
+{{- if .Values.endpointsSync.enabled }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "gatus.appName" . }}-git-sync
+  namespace: {{ .Release.Namespace }}
+data:
+  GIT_SYNC_REPO: {{ .Values.endpointsSync.gitRepo | quote }}
+  GIT_SYNC_BRANCH: {{ .Values.endpointsSync.gitBranch | quote }}
+  GIT_SYNC_WAIT: {{ .Values.endpointsSync.gitInterval | quote }}
+  {{- if .Values.selfSingedRootCA.enabled }}
+  GIT_SSL_CAINFO: "/etc/custom-ca/root-ca.crt"
+  {{- end }}
+{{- end }}

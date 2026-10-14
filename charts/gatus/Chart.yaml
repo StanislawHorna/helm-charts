@@ -1,0 +1,6 @@
+apiVersion: v2
+name: gatus
+description: A Helm chart for Gatus automated service health dashboard
+type: application
+version: 0.0.1
+appVersion: "v5.36.0"

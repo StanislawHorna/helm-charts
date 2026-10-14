@@ -1,0 +1,48 @@
+gatusImage:
+  repository: twinproduction/gatus
+  tag: "v5.36.0"
+  pullPolicy: IfNotPresent
+
+gitSyncImage:
+  repository: k8s.gcr.io/git-sync/git-sync
+  tag: "v3.6.3"
+  pullPolicy: IfNotPresent
+
+endpointsSync:
+  enabled: true
+  gitRepo: "https://github.com/your-username/gatus-endpoints.git"
+  gitBranch: "main"
+  gitInterval: "60"
+
+endpoints:
+  - name: Gatus
+    url: http://localhost:8080
+    conditions:
+      - "[STATUS] == 200"
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 500m
+    memory: 512Mi
+
+gateway:
+  enabled: true
+  rootUrl: "https://gatus.example.com"
+  gatewayName: traefik-gateway
+  gatewayNamespace: traefik
+  allowHttp: false
+
+persistence:
+  enabled: true
+  data:
+    size: 10Gi
+    storageClassName: "local-path-static"
+
+selfSingedRootCA:
+  enabled: true
+  ClusterSecretStoreName: "hcp-vault-secret-store"
+  kvName: "keyvault/self-signed-root-ca"
+  certificateProperty: "certificate"
